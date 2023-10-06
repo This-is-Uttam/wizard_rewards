@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "724526109677",
+    "project_id": "expre-dream",
+    "storage_bucket": "expre-dream.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724526109677:android:8c5a8ae57b03a765160de4",
+        "android_client_info": {
+          "package_name": "com.wizard.rewards"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724526109677-0uu6njj7p06vikle0hhnf7kq7q6o48t2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wizard.rewards",
+            "certificate_hash": "6b9c99b030da20110b2606a877c7ea4529093f44"
+          }
+        },
+        {
+          "client_id": "724526109677-320vaetkfm9k5m93enr7idrn1rgvbudo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wizard.rewards",
+            "certificate_hash": "11746bf4d41c89cc297dfbbff3a4778cf555ab5a"
+          }
+        },
+        {
+          "client_id": "724526109677-7jhs2433o51gq6hh56eo1rro8ubmnqnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiVuiCfAQ1I8uRFF4ZMvwXB0GnDFHCA8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724526109677-7jhs2433o51gq6hh56eo1rro8ubmnqnb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724526109677:android:b265a822250fd897160de4",
+        "android_client_info": {
+          "package_name": "com.wizard.rewards720"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724526109677-hn4482dilkpadavsv4sv3hcehone4rf9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wizard.rewards720",
+            "certificate_hash": "6b9c99b030da20110b2606a877c7ea4529093f44"
+          }
+        },
+        {
+          "client_id": "724526109677-o7sa2urc20lft8j48s5qo79bgs6v8p0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wizard.rewards720",
+            "certificate_hash": "19996acfb30e3c9c3ca5b3f7dc5bc00a4f81bfeb"
+          }
+        },
+        {
+          "client_id": "724526109677-7jhs2433o51gq6hh56eo1rro8ubmnqnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiVuiCfAQ1I8uRFF4ZMvwXB0GnDFHCA8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724526109677-7jhs2433o51gq6hh56eo1rro8ubmnqnb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

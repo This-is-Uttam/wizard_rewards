@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshCoinFrag"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
+        android:fillViewport="true"
+        android:id="@+id/coinScrollview"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_main"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/coinFragConstrLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                tools:context=".Fragments.CoinFragment">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/drawToolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/toolbar_drawable"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:titleTextColor="@color/whiteOnly">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/diamondTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/rewards_drawable"
+                            android:backgroundTint="@color/white"
+                            android:drawableLeft="@drawable/diamond"
+                            android:drawablePadding="8dp"
+                            android:ellipsize="end"
+                            android:maxWidth="100dp"
+                            android:padding="4dp"
+                            android:paddingStart="4dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp"
+                            android:singleLine="true"
+                            android:text="0"
+                            android:textColor="@color/TertiaryColor"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/dreampotLogo"
+                            app:layout_constraintEnd_toStartOf="@+id/textView"
+                            app:layout_constraintTop_toTopOf="@+id/dreampotLogo" />
+
+                        <TextView
+                            android:id="@+id/coinTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/rewards_drawable"
+                            android:backgroundTint="@color/white"
+                            android:drawableLeft="@drawable/coins_14dp"
+                            android:drawablePadding="8dp"
+                            android:ellipsize="end"
+
+                            android:maxWidth="100dp"
+                            android:padding="4dp"
+                            android:paddingStart="4dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp"
+                            android:singleLine="true"
+                            android:text="0"
+                            android:textColor="@color/orangeDark"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/dreampotLogo"
+                            app:layout_constraintEnd_toStartOf="@+id/textView"
+                            app:layout_constraintTop_toTopOf="@+id/dreampotLogo" />
+
+                    </LinearLayout>
+
+
+                </androidx.appcompat.widget.Toolbar>
+
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/drawToolbar">
+
+
+                    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                        android:id="@+id/buyCoinRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:shimmer_demo_child_count="5"
+                        app:shimmer_demo_layout="@layout/buy_coin_item_shimmer"
+                        app:shimmer_demo_layout_manager_type="linear_vertical"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/buy_coin_item" />
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/grey_3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:includeFontPadding="false"
+                    android:padding="10dp"
+                    android:text="OR"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/view8"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/view8" />
+
+
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Free Coins"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+                <TextView
+                    android:id="@+id/checkSurvery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Checking available survey..."
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/bitlabOfferwall"
+                    app:layout_constraintEnd_toEndOf="@+id/bitlabOfferwall"
+                    app:layout_constraintStart_toStartOf="@+id/bitlabOfferwall" />
+
+                <TextView
+                    android:id="@+id/bitlabOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Bitlabs Offerwall"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+                <TextView
+                    android:id="@+id/checkSurvery2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Checking available survey..."
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/theoremReachCenter"
+                    app:layout_constraintEnd_toEndOf="@+id/theoremReachCenter"
+                    app:layout_constraintStart_toStartOf="@+id/theoremReachCenter" />
+
+                <TextView
+                    android:id="@+id/cpxCheckSurvery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Checking available survey..."
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/cpxResearchsOfferwall"
+                    app:layout_constraintEnd_toEndOf="@+id/theoremReachCenter"
+                    app:layout_constraintStart_toStartOf="@+id/theoremReachCenter" />
+
+                <TextView
+                    android:id="@+id/inBrainCheckSurvery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Checking available survey..."
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/inBrainOfferwall"
+                    app:layout_constraintEnd_toEndOf="@+id/textView29"
+                    app:layout_constraintStart_toStartOf="@+id/textView29" />
+
+                <TextView
+                    android:id="@+id/theoremReachCenter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="TheoremReach Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bitlabOfferwall" />
+
+                <TextView
+                    android:id="@+id/ayetOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Ayet Studios Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/theoremReachCenter" />
+
+                <TextView
+                    android:id="@+id/cpaOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Cpa Lead Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ayetOfferwall" />
+
+                <TextView
+                    android:id="@+id/cpxResearchsOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="CPX Research Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cpaOfferwall" />
+
+                <TextView
+                    android:id="@+id/inBrainOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="InBrain Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/cpxResearchsOfferwall"
+                    app:layout_constraintStart_toStartOf="@+id/cpxResearchsOfferwall"
+                    app:layout_constraintTop_toBottomOf="@+id/cpxResearchsOfferwall" />
+
+                <TextView
+                    android:id="@+id/pollfishOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Pollfish Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/inBrainOfferwall" />
+
+                <TextView
+
+                    android:id="@+id/spinWin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Spin and Win"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/bitlabOfferwall"
+                    app:layout_constraintStart_toStartOf="@+id/bitlabOfferwall"
+                    app:layout_constraintTop_toBottomOf="@+id/pollfishOfferwall" />
+
+                <TextView
+
+                    android:id="@+id/scratchWin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Scratch and Win"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/spinWin"
+                    app:layout_constraintStart_toStartOf="@+id/spinWin"
+                    app:layout_constraintTop_toBottomOf="@+id/spinWin" />
+
+                <TextView
+
+                    android:id="@+id/dailyCheckInBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Daily Check In Reward"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/scratchWin"
+                    app:layout_constraintStart_toStartOf="@+id/scratchWin"
+                    app:layout_constraintTop_toBottomOf="@+id/scratchWin" />
+
+                <!--<RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </RelativeLayout>-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/watchVideioRv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/dailyCheckInBtn"
+                    app:layout_constraintStart_toStartOf="@+id/dailyCheckInBtn"
+                    app:layout_constraintTop_toBottomOf="@+id/dailyCheckInBtn"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/watch_vid_rv_item" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefresh"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homeFrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".MainActivity">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/dreampotLogo"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/app_logo"/>
+
+            <TextView
+                android:id="@+id/diamondTv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/rewards_drawable"
+                android:drawableLeft="@drawable/diamond"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:maxWidth="100dp"
+                android:padding="4dp"
+                android:paddingStart="4dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:singleLine="true"
+                android:text="0"
+                android:textColor="@color/TertiaryColor"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/coinTxt"
+                app:layout_constraintEnd_toStartOf="@+id/coinTxt"
+                app:layout_constraintTop_toTopOf="@+id/coinTxt" />
+
+            <TextView
+                android:id="@+id/coinTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/strore_curved_bg"
+                android:clickable="true"
+                android:drawableLeft="@drawable/coins_14dp"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:maxWidth="150dp"
+                android:padding="4dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:singleLine="true"
+                android:text="0"
+                android:textColor="@color/orangeDark"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/dreampotLogo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/dreampotLogo"
+                app:layout_constraintVertical_bias="0.428" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!--                <RelativeLayout-->
+                    <!--                    android:layout_width="wrap_content"-->
+                    <!--                    android:layout_height="match_parent"-->
+
+                    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                        android:id="@+id/promotionRv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shimmer_demo_child_count="5"
+                        app:shimmer_demo_layout="@layout/promotion_rv_item_shimmer"
+                        app:shimmer_demo_layout_manager_type="linear_horizontal"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/promotion_rv_item" />
+
+                    <TextView
+                        android:id="@+id/voucherTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:text="Vouchers"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/promotionRv" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/voucherLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/voucherTxt">
+
+                        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                            android:id="@+id/voucherMainRv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:shimmer_demo_child_count="5"
+                            app:shimmer_demo_layout="@layout/voucher_main_rv_item_shimmer"
+                            app:shimmer_demo_layout_manager_type="linear_horizontal"
+                            tools:itemCount="1"
+                            tools:listitem="@layout/voucher_main_rv_item" />
+
+                        <TextView
+                            android:id="@+id/emptyTxtVoucher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:alpha="0.6"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center"
+                            android:text="No vouchers available yet."
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/voucherMainRv" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView2"
+                        android:layout_width="0dp"
+                        android:layout_height="250dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="#5C81D4FA"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/voucherMainRv">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="24dp"
+                                android:fontFamily="@font/montserrat"
+                                android:text="Deal of the day"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/textView5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="24dp"
+                                android:text="16 Apr 2023"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+                            <ImageView
+                                android:id="@+id/imageView3"
+                                android:layout_width="0dp"
+                                android:layout_height="130dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@color/white"
+                                app:layout_constraintEnd_toEndOf="@+id/textView5"
+                                app:layout_constraintStart_toStartOf="@+id/textView4"
+                                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                                app:srcCompat="@drawable/boat_speaker" />
+
+                            <TextView
+                                android:id="@+id/textView6"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:singleLine="true"
+                                android:text="boAt Stone 190 Wireless Portable Speaker"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+                            <TextView
+                                android:id="@+id/textView7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="16dp"
+                                android:text=" ₹ 10/spot"
+                                android:textColor="@color/black"
+                                android:textSize="10sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="@+id/textView6"
+                                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+                            <ProgressBar
+                                android:id="@+id/progressBar"
+                                style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+                                android:layout_width="56dp"
+                                android:layout_height="59dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:background="@drawable/circular_white"
+                                android:indeterminateOnly="false"
+                                android:progress="70"
+                                android:progressDrawable="@drawable/progress_drawable"
+                                android:rotation="-90"
+                                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                                app:layout_constraintEnd_toEndOf="@+id/imageView3" />
+
+                            <TextView
+                                android:id="@+id/spotLeftText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:text="75"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="@+id/progressBar"
+                                app:layout_constraintStart_toStartOf="@+id/progressBar"
+                                app:layout_constraintTop_toTopOf="@+id/progressBar" />
+
+                            <TextView
+                                android:id="@+id/textView10"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Left"
+                                android:textSize="10sp"
+                                app:layout_constraintEnd_toEndOf="@+id/spotLeftText"
+                                app:layout_constraintStart_toStartOf="@+id/spotLeftText"
+                                app:layout_constraintTop_toBottomOf="@+id/spotLeftText" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/productTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:text="Products"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/voucherTxt"
+                        app:layout_constraintTop_toBottomOf="@+id/voucherLayout" />
+
+                    <TextView
+                        android:id="@+id/viewAllProduct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selected_round_corner_bg"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/right_arrow"
+                        android:gravity="center"
+                        android:padding="8dp"
+
+                        android:text="View all"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/productTxt"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/productTxt" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/productLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/productTxt">
+
+                        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                            android:id="@+id/trendingRv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:shimmer_demo_child_count="5"
+                            app:shimmer_demo_layout="@layout/trending_rv_item_shimmer"
+                            app:shimmer_demo_layout_manager_type="linear_horizontal"
+                            tools:itemCount="1"
+                            tools:listitem="@layout/trending_rv_item" />
+
+                        <TextView
+                            android:id="@+id/emptyTxtProduct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:alpha="0.6"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center"
+                            android:text="No products available yet."
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/trendingRv" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                    <TextView
+                        android:id="@+id/viewAllVoucher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/selected_round_corner_bg"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/right_arrow"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="View all"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/voucherTxt"
+                        app:layout_constraintEnd_toEndOf="@+id/viewAllProduct"
+                        app:layout_constraintTop_toTopOf="@+id/voucherTxt" />
+
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:orientation="horizontal"
+                        android:text="The Winners"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/productTxt"
+                        app:layout_constraintTop_toBottomOf="@+id/productLayout" />
+
+                    <RadioGroup
+                        android:id="@+id/winRadioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:checkedButton="@id/productRadio"
+                        android:fontFamily="@font/montserrat"
+                        android:orientation="horizontal"
+                        android:text="The Winners"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/textView11"
+                        app:layout_constraintTop_toBottomOf="@+id/textView11">
+
+                        <RadioButton
+                            android:id="@+id/productRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:background="@drawable/win_radio_btn_selector"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:padding="8dp"
+                            android:text="Products"
+                            android:textColor="@drawable/win_radio_btn_text_color"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/voucherRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="16dp"
+                            android:background="@drawable/win_radio_btn_selector"
+                            android:button="@android:color/transparent"
+
+                            android:fontFamily="@font/montserrat_bold"
+                            android:padding="8dp"
+                            android:text="Vouchers"
+                            android:textColor="@drawable/win_radio_btn_text_color"
+                            android:textSize="12sp"
+                            android:textStyle="normal" />
+
+                    </RadioGroup>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/winnerRv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/winRadioGroup"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/winner_rv_item">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+
+
+
+                    <TextView
+                        android:id="@+id/emptyTxtWinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="16dp"
+                        android:alpha="0.6"
+                        android:fontFamily="@font/montserrat"
+                        android:text="No winners available yet."
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/winnerRv" />
+
+
+
+                    <TextView
+                        android:id="@+id/viewAllWinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selected_round_corner_bg"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/right_arrow"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="View all"
+
+                        android:textColor="@color/primaryColor"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView11"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+                    <ProgressBar
+                        android:id="@+id/winProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/winnerRv" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/errorImg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/error_img" />
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Something went wrong"
+                    app:layout_constraintEnd_toEndOf="@+id/errorImg"
+                    app:layout_constraintStart_toStartOf="@+id/errorImg"
+                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar3"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_constraintEnd_toEndOf="@+id/errorImg"
+                    app:layout_constraintStart_toStartOf="@+id/errorImg"
+                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

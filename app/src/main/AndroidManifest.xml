@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DrearmpotApp"
+        tools:targetApi="31">
+        <activity
+            android:name=".PaymentHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UpiAppsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BitlabWebActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ScratchWinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ClaimUserDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PromotionViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VoucherMainBidHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VoucherMainDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RedeemHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RedeemViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BiddingHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DiamondHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CoinHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ReferralActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SpinWheelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.ayetstudios.publishersdk.OfferwallActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true">
+            <intent-filter android:label="offer">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="com.wizard.rewards720"
+                    android:scheme="offer" /> <!-- Replace with your lower case package name -->
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.ayetstudios.publishersdk.VideoActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".LeaderboardDetailActivity"
+            android:exported="false">
+
+            <!--
+            <intent-filter>
+                <action android:name="news_intent" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            -->
+        </activity>
+        <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".WinnerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductImageFullScreen"
+            android:exported="false" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ProductItemDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ImageCropperActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".WinnerDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TrendingDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VoucherDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CpaLeadWebActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="AYET_APP_KEY"
+            android:value="5c4bb5912a9158d5b42c31de7d94c0b2" />
+
+        <service
+            android:name=".MyFbMessageService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="default_channel_id" /> <!-- Admob -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" /> <!-- App Lovin Ads -->
+        <meta-data
+            android:name="applovin.sdk.key"
+            android:value="KACWcKCrv_C8bp7uFpuDWZh4SgIwT9lR3s5S7InMxhOcwM6R2_6NI_fafPG1W2BGT7GBUogcQfNDvaCotvEWWn" /> <!-- ////////////////////////////     PhonePe meta       ////////////////////////////////////////////////////////////////// -->
+        <!--
+ Keep it true in UAT environment
+Debuggable flag is removed from version releaseSDK-788438-SNAPSHOT and above
+        -->
+        <meta-data
+            android:name="com.phonepe.android.sdk.Debuggable"
+            android:value="true" /> <!-- Keep it true in UAT environment for both the flags -->
+        <meta-data
+            android:name="com.phonepe.android.sdk.isUAT"
+            android:value="true" />
+        <meta-data
+            android:name="com.phonepe.android.sdk.isSimulator"
+            android:value="true" /> <!-- The value will be the MID -->
+        <meta-data
+            android:name="com.phonepe.android.sdk.MerchantId"
+            android:value="PGTESTPAYUAT71" />
+    </application>
+
+</manifest>

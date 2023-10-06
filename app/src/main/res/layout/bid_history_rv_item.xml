@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/circular_solid_bidding_bg"
+        android:backgroundTint="@color/bid_his_item_color"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/bidTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="05:38 PM"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bidDate"
+            app:layout_constraintEnd_toEndOf="@+id/bidDiamond" />
+
+        <TextView
+            android:id="@+id/bidDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="03 Jul 2024"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/bidProductImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bidProductImage" />
+
+        <TextView
+            android:id="@+id/bidDiamond"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawableRight="@drawable/diamond"
+            android:drawablePadding="4dp"
+            android:gravity="end"
+            android:text="505"
+            android:textColor="@color/blue"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/bidCoin"
+            app:layout_constraintTop_toBottomOf="@+id/bidCoin" />
+
+        <TextView
+            android:id="@+id/bidCoin"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:drawableRight="@drawable/coins_18dp"
+            android:drawablePadding="4dp"
+            android:gravity="end"
+            android:text="505"
+            android:textColor="@color/orangeDark"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bidProductImage" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/bidProductImage"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:src="@color/blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/bidProductName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:text="Noise Pluse jhhhhhhh dhflAHF IDSHFh iasdhfiahf dksfh ah"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal|bold"
+            app:layout_constraintEnd_toStartOf="@+id/bidCoin"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/bidProductImage"
+            app:layout_constraintTop_toTopOf="@+id/bidProductImage" />
+
+        <TextView
+            android:id="@+id/bidWinningStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/blue_round_corner"
+            android:backgroundTint="@color/green"
+            android:ellipsize="end"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:padding="2dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="You are winner of this bidding"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bidDiamond"
+            app:layout_constraintStart_toStartOf="@+id/bidProductName"
+            app:layout_constraintTop_toTopOf="@+id/bidDate" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constrntLayoutClaim"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bottom_round_corner"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bidWinningStatus">
+
+            <TextView
+                android:id="@+id/claimText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="Claim product by providing us some details."
+                android:textColor="#040404"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/claimBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/claimBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/blue_round_corner"
+                android:backgroundTint="@color/green"
+                android:elevation="4dp"
+                android:fontFamily="sans-serif"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp"
+                android:text="Claim"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/claimText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/claimText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

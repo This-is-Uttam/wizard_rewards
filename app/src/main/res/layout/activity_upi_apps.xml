@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UpiAppsActivity">
+
+    <include
+        android:id="@+id/upiAppActivityToolbar"
+        layout="@layout/dreampot_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/noOfCoins2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/strore_curved_bg"
+        android:drawableLeft="@drawable/coins2"
+        android:drawablePadding="4dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:gravity="center|start"
+        android:maxLength="8"
+        android:padding="10dp"
+        android:text="10000000000000"
+        android:textColor="@color/orangeDark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upiAppActivityToolbar" />
+
+    <TextView
+        android:id="@+id/coinPrice2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/circular_solid_bg"
+        android:clickable="true"
+        android:gravity="center"
+        android:maxLength="7"
+        android:padding="16dp"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:text="₹10000000000"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/noOfCoins2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/noOfCoins2" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/textView68">
+
+        <TextView
+            android:id="@+id/noAppText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center"
+            android:text="Sorry, there is no UPI Apps  available in this device."
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/payModeRv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            tools:itemCount="1"
+            tools:listitem="@layout/upi_apps_rv_item" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView68"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Select a UPI App to make payment."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coinPrice2" />
+</androidx.constraintlayout.widget.ConstraintLayout>

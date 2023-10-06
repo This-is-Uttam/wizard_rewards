@@ -1,0 +1,100 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+//    digital turbine
+//    id 'com.fyber.fairbid-sdk-plugin' version '3.41.2'
+}
+
+android {
+    namespace 'com.wizard.rewards720'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.wizard.rewards720"
+        minSdk 24
+        targetSdk 33
+        versionCode 7   //changes after 1 release success
+        versionName "1.6"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures{
+        viewBinding true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation files('D:\\DrearmpotApp\\app\\libs\\ayetpublisher3.6.jar')
+    implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation("com.tbuonomo:dotsindicator:4.3")
+    implementation 'com.github.yalantis:ucrop:2.2.6'
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    implementation 'com.github.BitBurst-GmbH.bitlabs-android-library:core:2.2.9'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
+//    TheoremReach
+    implementation 'com.theoremreach:theoremreach:3.5.3'
+
+//    Pollfish
+    implementation 'com.pollfish:pollfish-googleplay:6.4.0'
+//    implementation 'com.google.android.gms:play-services-ads:22.0.0'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+//    volley
+    implementation 'com.android.volley:volley:1.2.1'
+//     shimmer effect
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+//    swipe refresh listener
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+//    Admob
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+//    scratch and win
+    implementation 'com.github.AnupKumarPanwar:ScratchView:1.3'
+
+//  AppLovin Ads
+    implementation 'com.applovin:applovin-sdk:11.11.3'
+
+//    Unity Ads
+    implementation 'com.unity3d.ads:unity-ads:4.7.0'
+
+//    Shimmer Recycler view
+    implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
+//      PhonePe test
+    implementation 'phonepe.intentsdk.android.snapshot:IntentSDK:releaseSDK-950892-SNAPSHOT'
+
+//    Cpx Researches Ad
+    implementation 'com.github.MakeOpinionGmbH:cpx-research-SDK-Android:1.5.9'
+
+//      InBrain Ad
+    implementation 'com.github.inbrainai:sdk-android:2.1.17'
+
+//    In-app Update
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+//    Razorpay Payment Gateway
+    implementation 'com.razorpay:checkout:1.6.33'
+}

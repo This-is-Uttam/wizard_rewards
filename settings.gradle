@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        jcenter()
+        maven { url "https://jitpack.io" }
+
+        flatDir {dirs 'libs'}
+//        PhonePe maven...........
+        maven {
+            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-snapshots"
+        }
+//        classpath 'com.google.gms:google-services:4.3.15'
+    }
+}
+rootProject.name = "DrearmpotApp"
+include ':app'
