@@ -158,56 +158,6 @@ public class TrakierCampaignDetailActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonObjectRequest);
 
 
-       /* trakierTasksModalList.add(new TrakierTasksModal(
-                "1","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "2","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "3","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "4","Install and Register.",true
-        ));
-
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "5","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "6","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "7","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "8", "Run the app for few minutes.", false
-        ));       trakierTasksModalList.add(new TrakierTasksModal(
-                "9","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "10","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "11","Install and Register.",true
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "12","Install and Register.",true
-        ));
-
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "13","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "14","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "15","Run the app for few minutes.",false
-        ));
-        trakierTasksModalList.add(new TrakierTasksModal(
-                "16", "Run the app for few minutes.", false
-        ));
-*/
 
     }
 

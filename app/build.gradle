@@ -47,6 +47,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 //    implementation files('D:\\DrearmpotApp\\app\\libs\\ayetpublisher3.6.jar')
     implementation files('libs/ayetpublisher3.6.jar')
+    implementation 'androidx.core:core:1.13.1'
 
 //    implementation files('D:\\wizard Rewards new\\DrearmpotApp\\app\\libs\\prodege-7.0.0-beta01.aar')
     testImplementation 'junit:junit:4.13.2'
