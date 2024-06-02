@@ -15,29 +15,37 @@
         android:gravity="center"
         android:text="Wizard Rewards"
         android:textColor="@color/TertiaryColor"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
 
-    <ImageView
+    <androidx.cardview.widget.CardView
         android:id="@+id/logo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/app_logo" />
+        app:layout_constraintVertical_bias="0.35000002">
+
+        <ImageView
+
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/app_logo" />
+    </androidx.cardview.widget.CardView>
+
 
     <TextView
         android:id="@+id/refreshActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginBottom="76dp"
         android:background="@drawable/button_bg"
         android:backgroundTint="@color/dark_blue"
         android:elevation="4dp"
@@ -54,23 +62,25 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/splashProgress"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
         android:indeterminateTint="@color/blue"
         android:progressBackgroundTint="#CF2020"
         android:progressBackgroundTintMode="add"
         android:progressTint="#827717"
         android:secondaryProgressTint="#004D40"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/refreshActivity"
         app:layout_constraintEnd_toEndOf="@+id/logo"
         app:layout_constraintStart_toStartOf="@+id/logo"
-        app:layout_constraintTop_toBottomOf="@+id/textView62" />
+        app:layout_constraintTop_toBottomOf="@+id/textView62"
+        app:layout_constraintVertical_bias="0.12" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

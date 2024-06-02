@@ -10,14 +10,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
-        jcenter()
         maven { url "https://jitpack.io" }
 
         flatDir {dirs 'libs'}
 //        PhonePe maven...........
         maven {
-            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-snapshots"
+            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android"
         }
 //        classpath 'com.google.gms:google-services:4.3.15'
     }

@@ -59,7 +59,6 @@ public class CPXApplication extends Application {
                 "#3295AC",
                 true);
 
-        Log.d("cpx", "initCPX: getidExt: "+ ControlRoom.getInstance().getId());
 
         CPXConfiguration config = new CPXConfigurationBuilder(CpxResearchAppId,
                 "uttam592k", "KNTw7a4l57W9ovHDXxprzj54ajdqGTEc",
@@ -104,7 +103,7 @@ public class CPXApplication extends Application {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String,String> header = new HashMap<>();
                 header.put(CONTENT_TYPE,CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION,BEARER+accessToken);
+                header.put(AUTHORISATION,BEARER+ControlRoom.getInstance().getAccessToken(CPXApplication.this));
                 return header;
             }
         };

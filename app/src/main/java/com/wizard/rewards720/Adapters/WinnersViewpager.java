@@ -18,11 +18,11 @@ public class WinnersViewpager extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0){
-            return new ProductWinFragment();
-        }else if (position == 1){
             return new VoucherWinFragment();
-        }else {
+        }else if (position == 1){
             return new ProductWinFragment();
+        }else {
+            return new VoucherWinFragment();
         }
     }
 
@@ -36,9 +36,9 @@ public class WinnersViewpager extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         String title = "";
         if (position==0){
-            title = "Products";
-        } else {
             title = "Vouchers";
+        } else {
+            title = "Products";
         }
         return title;
     }

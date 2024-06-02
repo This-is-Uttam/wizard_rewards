@@ -5,11 +5,12 @@
     android:id="@+id/swipeRefreshCoinFrag"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.core.widget.NestedScrollView
-        android:fillViewport="true"
         android:id="@+id/coinScrollview"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:fillViewport="true">
 
         <LinearLayout
             android:id="@+id/ll_main"
@@ -100,12 +101,23 @@
 
                 </androidx.appcompat.widget.Toolbar>
 
+                <com.startapp.sdk.ads.banner.Banner
+                    android:id="@+id/startAppBanner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
                 <RelativeLayout
                     android:id="@+id/relativeLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:descendantFocusability="blocksDescendants"
+                    android:minHeight="100dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -128,9 +140,21 @@
                         app:shimmer_demo_child_count="5"
                         app:shimmer_demo_layout="@layout/buy_coin_item_shimmer"
                         app:shimmer_demo_layout_manager_type="linear_vertical"
-                        tools:itemCount="2"
+                        tools:itemCount="1"
                         tools:listitem="@layout/buy_coin_item" />
+
+                    <TextView
+                        android:id="@+id/emptyTxtBuyCoin"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="15dp"
+                        android:alpha="0.6"
+                        android:fontFamily="@font/montserrat"
+                        android:gravity="center"
+                        android:text="No Buy Coin offers are available yet."
+                        android:visibility="gone" />
                 </RelativeLayout>
+
 
                 <View
                     android:id="@+id/view8"
@@ -215,6 +239,7 @@
                     android:text="Checking available survey..."
                     android:textColor="@color/black"
                     android:textSize="10sp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/theoremReachCenter"
                     app:layout_constraintEnd_toEndOf="@+id/theoremReachCenter"
                     app:layout_constraintStart_toStartOf="@+id/theoremReachCenter" />
@@ -227,6 +252,16 @@
                     android:textColor="@color/black"
                     android:textSize="10sp"
                     app:layout_constraintBottom_toTopOf="@+id/cpxResearchsOfferwall"
+                    app:layout_constraintEnd_toEndOf="@+id/theoremReachCenter"
+                    app:layout_constraintStart_toStartOf="@+id/theoremReachCenter" />
+
+                <TextView
+                    android:id="@+id/polfishVidAdStatis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/pollfishVidAd"
                     app:layout_constraintEnd_toEndOf="@+id/theoremReachCenter"
                     app:layout_constraintStart_toStartOf="@+id/theoremReachCenter" />
 
@@ -261,10 +296,37 @@
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="16sp"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/bitlabOfferwall" />
+
+                <TextView
+                    android:id="@+id/trakierOffer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Trakier Offers"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/theoremReachCenter" />
 
                 <TextView
                     android:id="@+id/ayetOfferwall"
@@ -290,7 +352,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/theoremReachCenter" />
+                    app:layout_constraintTop_toBottomOf="@+id/trakierOffer" />
 
                 <TextView
                     android:id="@+id/cpaOfferwall"
@@ -341,7 +403,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cpaOfferwall" />
+                    app:layout_constraintTop_toBottomOf="@+id/ayetOfferwall" />
 
                 <TextView
                     android:id="@+id/inBrainOfferwall"
@@ -392,6 +454,84 @@
                     app:layout_constraintTop_toBottomOf="@+id/inBrainOfferwall" />
 
                 <TextView
+                    android:id="@+id/pollfishVidAd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Pollfish Video Ad"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pollfishOfferwall" />
+
+                <TextView
+                    android:id="@+id/startAppAd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Play and Earn"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pollfishVidAd" />
+
+                <TextView
+                    android:id="@+id/pubscaleOfferwall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/button_bg"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="Pubscale Offerwall"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/startAppAd" />
+
+                <TextView
 
                     android:id="@+id/spinWin"
                     android:layout_width="0dp"
@@ -411,7 +551,7 @@
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="@+id/bitlabOfferwall"
                     app:layout_constraintStart_toStartOf="@+id/bitlabOfferwall"
-                    app:layout_constraintTop_toBottomOf="@+id/pollfishOfferwall" />
+                    app:layout_constraintTop_toBottomOf="@+id/pubscaleOfferwall" />
 
                 <TextView
 

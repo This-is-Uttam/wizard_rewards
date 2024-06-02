@@ -1,13 +1,18 @@
 package com.wizard.rewards720;
 
+import static com.wizard.rewards720.Constants.AUTHORISATION;
+import static com.wizard.rewards720.Constants.BEARER;
+import static com.wizard.rewards720.Constants.CONTENT_TYPE;
+import static com.wizard.rewards720.Constants.CONTENT_TYPE_VALUE;
+import static com.wizard.rewards720.Constants.PHONEPE_INITIATE_PAY_API;
+import static com.wizard.rewards720.Constants.PHONEPE_CALLBACK_URL;
+import static com.wizard.rewards720.LoginActivity.accessToken;
 import static com.wizard.rewards720.UpiAppsActivity.UPI_APP_PACKAGE_INTENT;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -20,16 +25,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.razorpay.Checkout;
-import com.razorpay.PaymentResultListener;
-import com.wizard.rewards720.databinding.ActivityPaymentBinding;
+import com.phonepe.intent.sdk.api.models.PhonePeEnvironment;
 import com.phonepe.intent.sdk.api.B2BPGRequest;
 import com.phonepe.intent.sdk.api.B2BPGRequestBuilder;
 import com.phonepe.intent.sdk.api.PhonePe;
 import com.phonepe.intent.sdk.api.PhonePeInitException;
 import com.phonepe.intent.sdk.api.UPIApplicationInfo;
+import com.wizard.rewards720.databinding.ActivityPaymentBinding;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,27 +40,31 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
-public class PaymentActivity extends AppCompatActivity implements PaymentResultListener {
+public class PaymentActivity extends AppCompatActivity {
     ActivityPaymentBinding binding;
     List<UPIApplicationInfo> upiAppsList;
     String apiEndPoint = "/pg/v1/pay";
-    String merchantId = "PGTESTPAYUAT71";
+    final String merchantId = "M1QKZY1HYEHN"; //Production MID
     float coins;
     int coinPrice;
     private String packageName;
     private String appName;
-    public static final String PHONEPE_PAYLOAD_PHONE = "9999988888";
+    public static final String PHONEPE_PAYLOAD_PHONE = "7004357686";
     public static String merchanTxnId;
-    public static final String RAZORPAY_API_KEY = "";
+    public static final String SALT_KEY = "368a7412-2311-4cba-a3e4-942ec2e1c738";
+    public static final String SALT_INDEX = "1";
+    public static final String APP_ID_PHONEPE = "1e2b3f076a2c44608a778713f9d45b0a"; //"85605410435e4e79a8d730b94bcbfe3f";
 
-
+//    Sandbox -
 //    MID: PGTESTPAYUAT71
 //    Salt Index: 1
 //    Salt Key: 3540d200-f7aa-4701-95b1-6f93be0cc7c4
 
     private static final int B2B_PG_REQUEST_CODE = 777;
+    private int coinId;
+    private B2BPGRequest b2BPGRequest;
 
 
     @Override
@@ -67,13 +74,12 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         setContentView(binding.getRoot());
 
         binding.payToolbar.customToolbar.setTitle("Payment");
-//        binding.payToolbar.customToolbar.setTitleTextColor(getResources().getColor(R.color.black, getTheme()));
-//        getWindow().setStatusBarColor(getResources().getColor(R.color.blue, getTheme()));
 
-        PhonePe.init(this);
+        PhonePe.init(this, PhonePeEnvironment.RELEASE, merchantId, APP_ID_PHONEPE);
 
         coins = getIntent().getFloatExtra("COINS", 0f);
         coinPrice = getIntent().getIntExtra("PRICE", 0);
+        coinId = getIntent().getIntExtra("BUY_COIN_ID", 0);
         packageName = getIntent().getStringExtra(UPI_APP_PACKAGE_INTENT);
         appName = getIntent().getStringExtra("APP_NAME");
 
@@ -87,37 +93,26 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         } catch (Exception e) {
             e.printStackTrace();
         }
-        getNewMerchantTxnId();
 
         for (UPIApplicationInfo info : upiAppsList) {
             Log.d("getNewMerchantTxnId", "  UPI apps Name: " + info.getApplicationName());
         }
 
         JSONObject jsonObject = new JSONObject();
-        JSONObject deviceContext = new JSONObject();
 
-        JSONArray jsonArray = new JSONArray();
-        JSONObject accCons = new JSONObject();
-        try {
-            accCons.put("accountNumber", "420200001892");
-            accCons.put("ifsc", "ICIC0000041");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        jsonArray.put(accCons);
+
 
         //      Payment Instrument.............
         JSONObject payIns = new JSONObject();
         try {
-            payIns.put("type", "UPI_INTENT");
-            payIns.put("targetApp", packageName);//packageName
-            payIns.put("accountConstraints", jsonArray);
+            payIns.put("type", "PAY_PAGE");
+            payIns.put("targetApp",packageName );//packageName"com.phonepe.app"
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
-
+        JSONObject deviceContext = new JSONObject();
         try {
             deviceContext.put("deviceOS", "ANDROID");
         } catch (JSONException e) {
@@ -125,11 +120,11 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         }
         merchanTxnId = "WR" + new Date().getTime() + "";
         try {
-            jsonObject.put("merchantId", merchantId);//PGTESTPAYUAT71
+            jsonObject.put("merchantId", merchantId);//sandbox MID PGTESTPAYUAT71
             jsonObject.put("merchantTransactionId", merchanTxnId);
-            jsonObject.put("merchantUserId", ControlRoom.getInstance().getUserName());
+            jsonObject.put("merchantUserId", ControlRoom.getInstance().getUserName(PaymentActivity.this));
             jsonObject.put("amount", coinPrice * 100);  //must multiply by 100
-            jsonObject.put("callbackUrl", "https://google.com/");
+            jsonObject.put("callbackUrl", PHONEPE_CALLBACK_URL);
             jsonObject.put("mobileNumber", PHONEPE_PAYLOAD_PHONE);
             jsonObject.put("deviceContext", deviceContext);
             jsonObject.put("paymentInstrument", payIns);
@@ -144,127 +139,117 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
 
         Log.d("Base64", "onCreate: base64: new : " + base64Payload);
 
-        String diggest = SHA256Util.generateSHA256Hash(base64Payload + "/pg/v1/pay" + "3540d200-f7aa-4701-95b1-6f93be0cc7c4");
+        String diggest = SHA256Util.generateSHA256Hash(base64Payload + "/pg/v1/pay" + SALT_KEY);// 3540d200-f7aa-4701-95b1-6f93be0cc7c4
 
-        String x_token = diggest + "###1";
+        String x_token = diggest + "###" + SALT_INDEX;
+
+        Log.d("xtoken", "onCreate: digest: " + diggest);
 
 //        callApi(x_token, base64Payload);
 
-        B2BPGRequest b2BPGRequest = new B2BPGRequestBuilder()
+        b2BPGRequest = new B2BPGRequestBuilder()
                 .setData(base64Payload)
                 .setChecksum(x_token)
                 .setUrl(apiEndPoint)
                 .build();
 
-        /*ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == B2B_PG_REQUEST_CODE ){
-                    Log.d("Phonnnn", "onActivityResult: Completion of UI flow of Phonepe");
-                }
-            }
-        });*/
 
-//        Checkout.preload(getApplicationContext());
+        String string_signature = PhonePe.getPackageSignature();
+        Log.d("sign", "onClick: phonepe Sign: " + string_signature);
+        System.out.println("Signature: "+ string_signature);
 
         binding.startPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    startActivityForResult(PhonePe.getImplicitIntent(PaymentActivity.this, b2BPGRequest,
-                            packageName), B2B_PG_REQUEST_CODE);
-                    binding.startPayment.setClickable(false);
-                    binding.startPayment.setEnabled(false);
-                    binding.payProgressBar.setVisibility(View.VISIBLE);
-                    binding.startPayment.setVisibility(View.GONE);
-                } catch (PhonePeInitException e) {
-                    e.printStackTrace();
-                    Log.d("Phonnnn", "onCreate: PhonePe Exception: " + e.getMessage());
+                String string_signature = PhonePe.getPackageSignature();
+                Log.d("sign", "onClick: phonepe Sign: " + string_signature);
+                // Calling initiate payment api and send payment required data...
 
-                }
+                initPayment();
 
-//              Razorpay payment
-//                startPayment();
 
             }
         });
 
-               /* {
-                "merchantId": "PGTESTPAYUAT",
-                "merchantTransactionId": "SU78777",
-                "merchantUserId": "SUB62033",
-                "amount": 10000,
-                "callbackUrl": "https://google.com/",
-                "mobileNumber": "9999999999",
-                "deviceContext": {
-            "deviceOS": "ANDROID"
-        },
-        "paymentInstrument": {
-            "type": "UPI_INTENT",
-                    "targetApp": "com.phonepe.app",
-                    "accountConstraints": [{
-                "accountNumber": "420200001892",
-                        "ifsc": "ICIC0000041"
-            }]
-        }*/
-//        list= (ArrayList) getListOfUpiApps();
-
-
     }
 
-    public void startPayment() {
+    private void initPayment() {
+        binding.payProgressBar.setVisibility(View.VISIBLE);
+        binding.startPayment.setVisibility(View.GONE);
 
-        /**
-         * Instantiate Checkout
-         */
-        Checkout checkout = new Checkout();
-        checkout.setKeyID(RAZORPAY_API_KEY);
-        /**
-         * Set your logo here
-         */
-        checkout.setImage(R.drawable.app_logo);
-
-        /**
-         * Reference to current activity
-         */
-        final Activity activity = this;
-
-        /**
-         * Pass your payment options to the Razorpay Checkout as a JSONObject
-         */
-        merchanTxnId = "WR" + new Date().getTime() + "";
-
+        JSONObject jsonObject = new JSONObject();
         try {
-            JSONObject options = new JSONObject();
+            jsonObject.put("pg_amount", coinPrice * 100);
+            jsonObject.put("amt", coinPrice);
+            jsonObject.put("coins_id", coinId);
+            jsonObject.put("coins", coins);
+            jsonObject.put("m_trnx_id", merchanTxnId);
 
-            options.put("name", getString(R.string.app_name));
-            options.put("description", "Reference No. #123456");
-            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.jpg");
-            options.put("order_id", merchanTxnId);//from response of step 3.
-            options.put("theme.color", "#3399cc");
-            options.put("currency", "INR");
-            options.put("amount", String.valueOf(coinPrice * 100));//pass amount in currency subunits
-            options.put("prefill.email", ControlRoom.getInstance().getEmail());
-            options.put("prefill.contact","9999999999");
-            JSONObject retryObj = new JSONObject();
-            retryObj.put("enabled", true);
-            retryObj.put("max_count", 4);
-            options.put("retry", retryObj);
-
-            checkout.open(activity, options);
-
-        } catch(Exception e) {
-            Log.e("RazorPay", "Error in starting Razorpay Checkout", e);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, PHONEPE_INITIATE_PAY_API,
+                jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    if (response.getBoolean("status") && response.getInt("code") == 200) {
+                        Log.d("initPayment", "onResponse: response Sucessfull: " + response.getString("data"));
+
+                        // start Payment here...
+                        startPaymentPhonePe();
+
+                    } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
+                        Log.d("initPayment", "onResponse: response Failed: " + response.getString("data"));
+                        binding.payProgressBar.setVisibility(View.GONE);
+                        binding.startPayment.setVisibility(View.VISIBLE);
+                        Toast.makeText(PaymentActivity.this, "Payment Request Failed", Toast.LENGTH_SHORT).show();
+
+                    } else Log.d("initPayment", "onResponse: Something went wrong");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("initPayment", "onResponse: error ResPonse:  " + error.getMessage());
+                binding.payProgressBar.setVisibility(View.GONE);
+                binding.startPayment.setVisibility(View.VISIBLE);
+                Toast.makeText(PaymentActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> header = new HashMap<>();
+                header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(PaymentActivity.this));
+                return header;
+            }
+        };
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
-    private String getNewMerchantTxnId() {       //max 38 chars may cause error
-        String id = UUID.randomUUID().toString();
 
-        String merchantTxnId = "mtxnid_" + id.substring(0, 24);
-        Log.d("getNewMerchantTxnId", "getNewMerchantTxnId: txnid: " + merchantTxnId + "  UPI apps: " + upiAppsList.size());
-        return merchantTxnId;
+    public void startPaymentPhonePe() {
+        try {
+            startActivityForResult(Objects.requireNonNull(PhonePe.getImplicitIntent(PaymentActivity.this, b2BPGRequest,
+                    packageName)), B2B_PG_REQUEST_CODE);
+            binding.startPayment.setClickable(false);
+            binding.startPayment.setEnabled(false);
+        } catch (PhonePeInitException e) {
+            e.printStackTrace();
+            Log.d("Phonnnn", "onCreate: PhonePe Exception: " + e.getMessage());
+
+        }
+
     }
+
+
 
     private String convertJsonToBase64(JSONObject object) {
         return Base64.encodeToString(object.toString().getBytes(), Base64.DEFAULT);
@@ -275,56 +260,25 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == B2B_PG_REQUEST_CODE) {
-            binding.startPayment.setClickable(true);
-            binding.startPayment.setEnabled(true);
-            binding.payProgressBar.setVisibility(View.GONE);
-            binding.startPayment.setVisibility(View.VISIBLE);
+            startActivity(new Intent(this, MainActivity.class));
+            overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left);
+            finishAffinity();
 
             // SHA
             Log.d("Payloaddd", "onActivityResult: merchant Txn id: " + merchanTxnId);
-            String diggest = SHA256Util.generateSHA256Hash("/pg/v1/status/" + merchantId + "/" + merchanTxnId + "3540d200-f7aa-4701-95b1-6f93be0cc7c4") + "###1";
+            String diggest = SHA256Util.generateSHA256Hash("/pg/v1/status/" + merchantId + "/" + merchanTxnId + SALT_KEY) + "###1";
             Log.d("Payloaddd", "onActivityResult: sha status: " + diggest);
 
 
             // RESPONSE
 
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 assert data != null;
-                Log.d("Payloaddd", "onActivityResult: "+ data.getDataString());
+                Log.d("Payloaddd", "onActivityResult: " + data.getDataString());
             }
 
-            /*{
-                "success": true,
-                    "code": "PAYMENT_SUCCESS",
-                    "message": "Your payment is successful.",
-                    "data": {
-                        "merchantId": "PGTESTPAYUAT71",
-                        "merchantTransactionId": "WR1695990513045",
-                        "transactionId": "T2309291758366258429025",
-                        "amount": 50000,
-                        "state": "COMPLETED",
-                        "responseCode": "SUCCESS",
-                        "paymentInstrument": {
-                            "type": "UPI",
-                            "vpa": null,
-                            "maskedAccountNumber": "XXXXXXXXXX890125",
-                            "ifsc": "AABF0009009",
-                            "utr": "206850679072",
-                            "upiTransactionId": "AXLd8ee55a8fd50452da92639907560b6cd",
-                            "accountHolderName": "Rajesh Kumar"
-                }
-            }
-            }*/
         }
     }
 
-    @Override
-    public void onPaymentSuccess(String s) {
-        Toast.makeText(this, "Payment Successfull: "+s , Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void onPaymentError(int i, String s) {
-        Toast.makeText(this, "Payment Failed: "+s , Toast.LENGTH_SHORT).show();
-    }
 }

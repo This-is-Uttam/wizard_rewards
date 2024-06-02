@@ -13,11 +13,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.CycleInterpolator;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,7 +28,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.wizard.rewards720.Adapters.ProductAllWinnersAdapter;
 import com.wizard.rewards720.Adapters.VoucherAllWinnersAdapter;
+import com.wizard.rewards720.ControlRoom;
 import com.wizard.rewards720.Modals.VoucherWinModal;
 import com.wizard.rewards720.databinding.FragmentVoucherWinBinding;
 
@@ -44,6 +49,10 @@ public class VoucherWinFragment extends Fragment {
 
     ArrayList<VoucherWinModal> voucherWinList;
     ValueAnimator valueAnimator;
+
+    public VoucherWinFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,18 +95,73 @@ public class VoucherWinFragment extends Fragment {
                             );
                             voucherWinModal.setVoucherWinnerCount(i+1);
 
+                            // Winning monnth
+                            int monthNum = jsonObject.getInt("winning_month");
+                            String month = "";
+
+                            switch (monthNum){
+                                case 1:
+                                    month = "January";
+                                    break;
+                                case 2:
+                                    month = "February";
+                                    break;
+                                case 3:
+                                    month = "March";
+                                    break;
+                                case 4:
+                                    month = "April";
+                                    break;
+                                case 5:
+                                    month = "May";
+                                    break;
+                                case 6:
+                                    month = "June";
+                                    break;
+                                case 7:
+                                    month = "July";
+                                    break;
+                                case 8:
+                                    month = "August";
+                                    break;
+                                case 9:
+                                    month = "September";
+                                    break;
+                                case 10:
+                                    month = "October";
+                                    break;
+                                case 11:
+                                    month = "November";
+                                    break;
+                                case 12:
+                                    month = "December";
+                                    break;
+
+                            }
+                            voucherWinModal.setWinnMonth(month);
                             voucherWinList.add(voucherWinModal);
 
                         }
                         startValueAnimation(voucherWinList.size());
 
+                        // Empty List Handle
 
-//                        reverse list to descending order
-                        Collections.reverse(voucherWinList);
+                        if (voucherWinList.size() == 0) {
+                            binding.vouchersListRv.setVisibility(View.GONE);
+                            binding.emptyTxtWinner.setVisibility(View.VISIBLE);
+                        } else {
+//                            reverse list to descending order
+                            Collections.reverse(voucherWinList);
 
-                        binding.vouchersListRv.setAdapter(new VoucherAllWinnersAdapter(voucherWinList,getContext(),true));
-                        binding.vouchersListRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                        binding.vouchersListRv.setNestedScrollingEnabled(false);
+                            binding.vouchersListRv.setAdapter(new VoucherAllWinnersAdapter(voucherWinList,getContext(), true));
+                            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                            binding.vouchersListRv.setLayoutManager(layoutManager);
+                            binding.vouchersListRv.setNestedScrollingEnabled(false);
+
+
+
+                        }
+
 
 
                     } else if (!response.getBoolean("status") && response.getInt("code") == 201){
@@ -121,7 +185,7 @@ public class VoucherWinFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };

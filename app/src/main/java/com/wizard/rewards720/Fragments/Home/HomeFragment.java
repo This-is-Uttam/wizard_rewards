@@ -1,4 +1,4 @@
-package com.wizard.rewards720.Fragments;
+package com.wizard.rewards720.Fragments.Home;
 
 import static com.wizard.rewards720.Constants.AUTHORISATION;
 import static com.wizard.rewards720.Constants.BANNER_API_URL;
@@ -12,13 +12,20 @@ import static com.wizard.rewards720.Constants.PRODUCT_WINNERS_GET_API;
 import static com.wizard.rewards720.Constants.USER_API_URL;
 import static com.wizard.rewards720.Constants.VOUCHER_MAIN_URL;
 import static com.wizard.rewards720.Constants.VOUCHER_WINNERS_GET_API;
+import static com.wizard.rewards720.Fragments.CoinFragment.PUBSCALE_APP_ID;
 import static com.wizard.rewards720.LoginActivity.accessToken;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -27,8 +34,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -36,6 +42,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.pubscale.sdkone.offerwall.OfferWall;
+import com.pubscale.sdkone.offerwall.OfferWallConfig;
+import com.pubscale.sdkone.offerwall.models.OfferWallInitListener;
+import com.pubscale.sdkone.offerwall.models.OfferWallListener;
+import com.pubscale.sdkone.offerwall.models.Reward;
+import com.pubscale.sdkone.offerwall.models.errors.InitError;
 import com.wizard.rewards720.Adapters.ProductAllWinnersAdapter;
 import com.wizard.rewards720.Adapters.VoucherAllWinnersAdapter;
 import com.wizard.rewards720.Adapters.VoucherMainAdapter;
@@ -44,9 +56,11 @@ import com.wizard.rewards720.Constants;
 import com.wizard.rewards720.ControlRoom;
 import com.wizard.rewards720.DiamondHistoryActivity;
 import com.wizard.rewards720.Modals.ProductWinModal;
+import com.wizard.rewards720.Modals.UserModal;
 import com.wizard.rewards720.Modals.VoucherMainModal;
 import com.wizard.rewards720.Modals.VoucherWinModal;
 import com.wizard.rewards720.R;
+import com.wizard.rewards720.SplashScreenActivity;
 import com.wizard.rewards720.TrendingDetailActivity;
 import com.wizard.rewards720.VoucherDetailActivity;
 import com.wizard.rewards720.WinnerDetailActivity;
@@ -56,6 +70,7 @@ import com.wizard.rewards720.Modals.PromotionModal;
 import com.wizard.rewards720.Modals.TrendingModal;
 import com.wizard.rewards720.databinding.FragmentHomeBinding;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +78,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +90,7 @@ public class HomeFragment extends Fragment {
 
     ArrayList<VoucherMainModal> voucherMainList;
 
+
     ArrayList<TrendingModal> trendingItemList;
 
     ArrayList<ProductWinModal> productWinnerList;
@@ -82,23 +99,39 @@ public class HomeFragment extends Fragment {
     boolean isError = false;
     PromotionAdapter promotionAdapter;
     boolean isFirstTime = true;
+    Context mainContext;
+    HomeViewModal homeViewModal;
 
+
+    public HomeFragment(Context context) {
+        mainContext = context;
+        Log.d("saveCheck", "HomeFragment: custom constructor: "+ mainContext);
+    }
+
+    public HomeFragment() {
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         Log.d("TAG", "onCreateView: is called");
+        if (mainContext == null){
+            mainContext = requireActivity();
+        }
 
-//        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.transparent_blue, getActivity().getTheme()));
+//        if (savedInstanceState == null){
+//            startActivity(new Intent(mainContext, SplashScreenActivity.class));
+//            finishAffinity(requireActivity());
+//        }
 
-
+        homeViewModal = new ViewModelProvider((ViewModelStoreOwner) mainContext).get(HomeViewModal.class);
         binding.frameLayout.setVisibility(View.VISIBLE);
         binding.progressBar3.setVisibility(View.VISIBLE);
 
-        if (ControlRoom.isNetworkConnected(getContext())) {
+        if (ControlRoom.isNetworkConnected(requireContext())) {
             binding.frameLayout.setVisibility(View.GONE);
             binding.progressBar3.setVisibility(View.GONE);
             binding.errorImg.setVisibility(View.GONE);
@@ -111,30 +144,186 @@ public class HomeFragment extends Fragment {
         }
 
 
-        updateCoins();
+//        updateCoins();
+        homeViewModal.getUserData().observe((LifecycleOwner) mainContext, new Observer<UserModal>() {
+            @Override
+            public void onChanged(UserModal userModal) {
+                binding.coinTxt.setText(userModal.getCoins());
+                binding.diamondTv.setText(userModal.getDiamonds());
+
+                ControlRoom.getInstance().setCoins(userModal.getCoins(),mainContext);
+                ControlRoom.getInstance().setDiamonds(userModal.getDiamonds(), mainContext);
+            }
+        });
+
+        if (homeViewModal.getUserData().getValue() == null){
+            homeViewModal.fetchUserDataFromApi(mainContext);
+        }
 
 //        promotionRv
+//        getPromotionImage();
+        homeViewModal.getBannersList().observe((LifecycleOwner) mainContext, new Observer<ArrayList<PromotionModal>>() {
+            @Override
+            public void onChanged(ArrayList<PromotionModal> promotionModals) {
+                if (promotionModals.size() == 0) {
+                    binding.promotionRv.setVisibility(View.GONE);
+                } else {
+                    promotionAdapter = new PromotionAdapter(promotionModals, getContext());
+                    binding.promotionRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+//                    binding.promotionRv.setNestedScrollingEnabled(false);
+                    binding.promotionRv.setAdapter(promotionAdapter);
+                    binding.promotionRv.hideShimmerAdapter();
+                }
+            }
+        });
 
-        getPromotionImage();
+        if (homeViewModal.getBannersList().getValue() == null){
+            binding.promotionRv.showShimmerAdapter();
+            homeViewModal.fetchBannersDataFromApi(mainContext);
+        }
 
+        //Pubscale Card
+
+        // Pubscale Offerwall
+        OfferWallConfig offerWallConfig =
+                new OfferWallConfig.Builder(getActivity(), PUBSCALE_APP_ID)
+                        .setUniqueId(ControlRoom.getInstance().getId(getActivity())) //optional, used to represent the user of your application
+//                        .setLoaderBackgroundBitmap(backgroundBitmap)//optional
+//                        .setLoaderForegroundBitmap(foregroundBitmap)//optional
+                        .setFullscreenEnabled(false)//optional
+                        .build();
+
+        // Pubscale Initialization
+        OfferWall.init(offerWallConfig, new OfferWallInitListener() {
+            @Override
+            public void onInitSuccess() {
+                Log.d("pubscale", "onInitSuccess: Pubscale init success");
+                binding.pubCard.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onInitFailed(@NonNull InitError error) {
+                Log.d("pubscale", "onInitFailed: Pubscale init Failed: "+ error.getMessage());
+            }
+        });
+
+
+        binding.pubCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OfferWall.launch(getActivity(), new OfferWallListener() {
+                    @Override
+                    public void onOfferWallShowed() {
+
+                    }
+
+                    @Override
+                    public void onOfferWallClosed() {
+
+                    }
+
+                    @Override
+                    public void onRewardClaimed(Reward reward) {
+                        Log.d("pubscale", "onRewardClaimed: currency: " + reward.getCurrency()+ "components: "+reward.component1()+reward.component2()+reward.component3());
+                        Toast.makeText(getActivity(), "Pubscale Reward Coins added successfully! "+reward.getAmount()+" coins" , Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailed(String s) {
+                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        //        voucherRv
+//        voucherMainList = new ArrayList<>();
+//        getVoucherMainList();
+        homeViewModal.getVouchersList().observe((LifecycleOwner) mainContext, new Observer<ArrayList<VoucherMainModal>>() {
+            @Override
+            public void onChanged(ArrayList<VoucherMainModal> voucherMainModals) {
+                //               checking voucher winners list empty.
+                                if (voucherMainModals.size() == 0) {
+                                    binding.voucherMainRv.setVisibility(View.GONE);
+                                    binding.emptyTxtVoucher.setVisibility(View.VISIBLE);
+                                } else {
+                                    binding.voucherMainRv.setVisibility(View.VISIBLE);
+                                    binding.emptyTxtVoucher.setVisibility(View.GONE);
+                                    //show the arrayList...
+                                    binding.voucherMainRv.setAdapter(new VoucherMainAdapter(getSortedArrayList(voucherMainModals), getContext()));
+                                    binding.voucherMainRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+//                                    binding.voucherMainRv.setNestedScrollingEnabled(false);
+                                    binding.voucherMainRv.hideShimmerAdapter();
+                                }
+            }
+        });
+
+        if (homeViewModal.getVouchersList().getValue() == null){
+            binding.voucherMainRv.showShimmerAdapter();
+            homeViewModal.fetchVouchersDataFromApi(mainContext);
+        }
 
 //        trendingRv= productRv
-        trendingItemList = new ArrayList<>();
-        getAllProducts();
+//        trendingItemList = new ArrayList<>();
+//        getAllProducts();
+        homeViewModal.getProductsList().observe((LifecycleOwner) mainContext, new Observer<ArrayList<TrendingModal>>() {
+            @Override
+            public void onChanged(ArrayList<TrendingModal> trendingModals) {
+//                    checking product list empty.
+                if (trendingModals.size() == 0) {
+                    binding.trendingRv.setVisibility(View.GONE);
+                    binding.emptyTxtProduct.setVisibility(View.VISIBLE);
+                } else {
+                    binding.trendingRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+//                    binding.trendingRv.setNestedScrollingEnabled(false);
+                    binding.trendingRv.setAdapter(new TrendingAdapter(trendingModals, getContext()));
+                    binding.trendingRv.hideShimmerAdapter();
+                }
+            }
+        });
 
-
-//        voucherRv
-        voucherMainList = new ArrayList<>();
-        getVoucherMainList();
+        if (homeViewModal.getProductsList().getValue() == null) {
+            binding.trendingRv.showShimmerAdapter();
+            homeViewModal.fetchProductsDataFromApi(mainContext);
+        }
 
 
 //        winnerRv
-        getProductWinnerList();
+//        getVoucherWinnersList();
+        homeViewModal.getVoucherWinsList().observe((LifecycleOwner) mainContext, new Observer<ArrayList<VoucherWinModal>>() {
+            @Override
+            public void onChanged(ArrayList<VoucherWinModal> voucherWinModals) {
+//                        checking voucher winners list empty.
+                        if (voucherWinModals.size() == 0) {
+                            binding.winnerRv.setVisibility(View.GONE);
+                            binding.emptyTxtWinner.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.winnerRv.setVisibility(View.VISIBLE);
+                            binding.emptyTxtWinner.setVisibility(View.GONE);
 
+                            binding.winProgressBar.setVisibility(View.GONE);
+                            binding.winnerRv.setForeground(null);
+
+                            binding.winnerRv.setAdapter(new VoucherAllWinnersAdapter(voucherWinModals, getContext(), false));
+                            binding.winnerRv.setLayoutManager(new LinearLayoutManager(getContext()));
+//                            binding.winnerRv.setNestedScrollingEnabled(false);
+                        }
+            }
+        });
+
+        if (homeViewModal.getVoucherWinsList().getValue() == null){
+            binding.winProgressBar.setVisibility(View.VISIBLE);
+            binding.winnerRv.setForeground(getContext().getDrawable(R.color.white));
+
+            homeViewModal.fetchVoucherWinsDataFromApi(mainContext);
+        }
+
+//      Vouchers and Products Radio Buttons
         binding.productRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getProductWinnerList();
+
                 binding.productRadio.setEnabled(false);
                 binding.voucherRadio.setEnabled(true);
             }
@@ -148,27 +337,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
-       /* String winnerDesc= String.valueOf(Html.fromHtml("<b>Uttam</b> from Madhya Pradesh wins MI Smart Watch Black worth ₹ 2999"));
-        String winnerDesc2= String.valueOf(Html.fromHtml("<b>Aman</b> from Kerela wins MI Smart Watch Black worth ₹ 2999"));
-        String winnerDesc3= String.valueOf(Html.fromHtml("<b>Mohan</b> from Kerela wins Alien Earpods Blue worth ₹ 2499"));
-        String winnerDesc4= String.valueOf(Html.fromHtml("<b>Karan</b> from Kerela wins HP Pavilion Laptop worth ₹ 49999"));
-        String winnerDesc5= String.valueOf(Html.fromHtml("<b>Aashish</b> from Kerela wins Phillips Trimmer worth ₹ 599"));
-        winnerList.add(new WinnerModal("#97","U",winnerDesc,"",R.drawable.mi_watch));
-        winnerList.add(new WinnerModal("#98","A",winnerDesc2,"",R.drawable.mi_watch));
-        winnerList.add(new WinnerModal("#99","M",winnerDesc3,"",R.drawable.earpods));
-        winnerList.add(new WinnerModal("#100","K",winnerDesc4,"",R.drawable.hp_pavilion));
-        winnerList.add(new WinnerModal("#101","A",winnerDesc5,"",R.drawable.trimmer_phillips));*/
-
-        /*Collections.reverse(winnerList);
-        binding.winnerRv.setAdapter(new WinnerAdapter(winnerList,getContext()));
-        binding.winnerRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.winnerRv.setNestedScrollingEnabled(false);*/
 
 //        viewAllVoucher
         binding.viewAllVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent voucherIntent = new Intent(getContext(), VoucherDetailActivity.class);
+                Intent voucherIntent = new Intent(requireContext(), VoucherDetailActivity.class);
 
                 startActivity(voucherIntent);
             }
@@ -189,19 +363,40 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up_anim);
-        binding.dreampotLogo.startAnimation(slideUp);
-
+//         Swipe Refresh Listener
         binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 /*getAllProducts();
                 getPromotionImage();
                 updateCoins();*/
-                Fragment fragment = new HomeFragment();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainContainer, fragment);
-                ft.commit();
+//                Fragment fragment = new HomeFragment(mainContext);
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                ft.replace(R.id.mainContainer, fragment);
+//                ft.commit();
+
+                // fetching BannersList
+                binding.promotionRv.showShimmerAdapter();
+                homeViewModal.fetchBannersDataFromApi(mainContext);
+
+                // fetching VouchersList
+                binding.voucherMainRv.showShimmerAdapter();
+                homeViewModal.fetchVouchersDataFromApi(mainContext);
+
+                // fetching ProductList
+                binding.trendingRv.showShimmerAdapter();
+                homeViewModal.fetchProductsDataFromApi(mainContext);
+
+                // fetching Voucher Winners
+                binding.winProgressBar.setVisibility(View.VISIBLE);
+                binding.winnerRv.setForeground(getContext().getDrawable(R.color.white));
+                homeViewModal.fetchVoucherWinsDataFromApi(mainContext);
+                binding.voucherRadio.setChecked(true);
+                binding.voucherRadio.setEnabled(false);
+                binding.productRadio.setEnabled(true);
+
+                // fetching Coins
+                homeViewModal.fetchUserDataFromApi(mainContext);
 
                 binding.swipeRefresh.setRefreshing(false);
             }
@@ -224,9 +419,10 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+
     private void getProductWinnerList() {
         binding.winProgressBar.setVisibility(View.VISIBLE);
-        binding.winnerRv.setForeground(getContext().getDrawable(R.color.white));
+        binding.winnerRv.setForeground(ResourcesCompat.getDrawable(getResources(), R.color.white, getContext().getTheme()));
 
         productWinnerList = new ArrayList<>();
 
@@ -259,6 +455,51 @@ public class HomeFragment extends Fragment {
                             );
                             productWinModal.setProductWinnerCount(i + 1);
 
+                            // Winning monnth
+                            int monthNum = jsonObject.getInt("winning_month");
+                            String month = "";
+
+                            switch (monthNum) {
+                                case 1:
+                                    month = "January";
+                                    break;
+                                case 2:
+                                    month = "February";
+                                    break;
+                                case 3:
+                                    month = "March";
+                                    break;
+                                case 4:
+                                    month = "April";
+                                    break;
+                                case 5:
+                                    month = "May";
+                                    break;
+                                case 6:
+                                    month = "June";
+                                    break;
+                                case 7:
+                                    month = "July";
+                                    break;
+                                case 8:
+                                    month = "August";
+                                    break;
+                                case 9:
+                                    month = "September";
+                                    break;
+                                case 10:
+                                    month = "October";
+                                    break;
+                                case 11:
+                                    month = "November";
+                                    break;
+                                case 12:
+                                    month = "December";
+                                    break;
+
+                            }
+                            productWinModal.setWinMonth(month);
+
                             productWinnerList.add(productWinModal);
 
                         }
@@ -275,7 +516,7 @@ public class HomeFragment extends Fragment {
 
                             binding.winnerRv.setAdapter(new ProductAllWinnersAdapter(productWinnerList, getContext(), false));
                             binding.winnerRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                            binding.winnerRv.setNestedScrollingEnabled(false);
+//                            binding.winnerRv.setNestedScrollingEnabled(false);
 
                         }
 
@@ -301,7 +542,7 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
@@ -339,6 +580,50 @@ public class HomeFragment extends Fragment {
 
                             );
                             voucherWinModal.setVoucherWinnerCount(i + 1);
+                            // Winning monnth
+                            int monthNum = jsonObject.getInt("winning_month");
+                            String month = "";
+
+                            switch (monthNum) {
+                                case 1:
+                                    month = "January";
+                                    break;
+                                case 2:
+                                    month = "February";
+                                    break;
+                                case 3:
+                                    month = "March";
+                                    break;
+                                case 4:
+                                    month = "April";
+                                    break;
+                                case 5:
+                                    month = "May";
+                                    break;
+                                case 6:
+                                    month = "June";
+                                    break;
+                                case 7:
+                                    month = "July";
+                                    break;
+                                case 8:
+                                    month = "August";
+                                    break;
+                                case 9:
+                                    month = "September";
+                                    break;
+                                case 10:
+                                    month = "October";
+                                    break;
+                                case 11:
+                                    month = "November";
+                                    break;
+                                case 12:
+                                    month = "December";
+                                    break;
+
+                            }
+                            voucherWinModal.setWinnMonth(month);
 
                             voucherWinList.add(voucherWinModal);
 
@@ -358,7 +643,7 @@ public class HomeFragment extends Fragment {
 
                             binding.winnerRv.setAdapter(new VoucherAllWinnersAdapter(voucherWinList, getContext(), false));
                             binding.winnerRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                            binding.winnerRv.setNestedScrollingEnabled(false);
+//                            binding.winnerRv.setNestedScrollingEnabled(false);
                         }
 
 
@@ -383,14 +668,12 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
         Volley.newRequestQueue(binding.getRoot().getContext()).add(jsonObjectRequest);
     }
-
-
 
 
     // promotion = banner
@@ -404,7 +687,7 @@ public class HomeFragment extends Fragment {
                 try {
                     if (response.getBoolean("status") && response.getInt("code") == 200) {
                         Log.d("getPromotionImage", "onResponse: response Sucessfull: " + response.getString("data"));
-                        showPromotionsBanner(response);
+//                        showPromotionsBanner(response);
 
                     } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
                         Log.d("getPromotionImage", "onResponse: response Failed: " + response.getString("data"));
@@ -428,7 +711,7 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, "Bearer " + accessToken);
+                header.put(AUTHORISATION, "Bearer " + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
@@ -454,13 +737,19 @@ public class HomeFragment extends Fragment {
             throw new RuntimeException(e);
         }
 
+        if (promotionList.size() == 0) {
+            binding.promotionRv.setVisibility(View.GONE);
+        } else {
 
-        promotionAdapter = new PromotionAdapter(promotionList, getContext());
-        binding.promotionRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
-        binding.promotionRv.setNestedScrollingEnabled(false);
-        binding.promotionRv.setAdapter(promotionAdapter);
-        binding.promotionRv.hideShimmerAdapter();
-        promotionAdapter.notifyDataSetChanged();
+
+            promotionAdapter = new PromotionAdapter(promotionList, getContext());
+            binding.promotionRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+//            binding.promotionRv.setNestedScrollingEnabled(false);
+            binding.promotionRv.setAdapter(promotionAdapter);
+            binding.promotionRv.hideShimmerAdapter();
+            promotionAdapter.notifyDataSetChanged();
+        }
+
     }
 
     public void updateCoins() {
@@ -472,13 +761,11 @@ public class HomeFragment extends Fragment {
                         Log.d("updateCoins", "onResponse: Sucessfull...:" + response.getString("data"));
                         COINS = response.getJSONObject("data").getInt("points");
                         DIAMONDS = response.getJSONObject("data").getInt("daimond");
-                        ControlRoom.getInstance().setCoins(response.getJSONObject("data").getInt("points") + "");
-                        ControlRoom.getInstance().setDiamonds(DIAMONDS + "");
+                        ControlRoom.getInstance().setCoins(response.getJSONObject("data").getInt("points") + "", mainContext);
+                        ControlRoom.getInstance().setDiamonds(DIAMONDS + "", mainContext);
 
                         binding.coinTxt.setText(COINS + "");
                         binding.diamondTv.setText(DIAMONDS + "");
-                        System.out.println("Coins from ControlRoom: " + ControlRoom.getInstance().getCoins());
-                        System.out.println("dIAMONDS from ControlRoom: " + ControlRoom.getInstance().getDiamonds() + "DIAMONDS: " + DIAMONDS);
                     } else
                         Log.d("updateCoins", "onResponse: Failed..." + response.getString("data"));
                 } catch (JSONException e) {
@@ -496,7 +783,7 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
@@ -505,10 +792,11 @@ public class HomeFragment extends Fragment {
 
     private void getAllProducts() {
         binding.trendingRv.showShimmerAdapter();
+        trendingItemList.clear();
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_API_URL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                trendingItemList.clear();
                 try {
                     if (response.getBoolean("status") && response.getInt("code") == 200) {
                         Log.d("getAllProductsHomeFrag", "onResponse: response Sucess: " + response.getString("data"));
@@ -547,9 +835,12 @@ public class HomeFragment extends Fragment {
                             binding.trendingRv.setVisibility(View.VISIBLE);
                             binding.emptyTxtProduct.setVisibility(View.GONE);
 
-//
+
+                            Collections.reverse(trendingItemList);
+
+
                             binding.trendingRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
-                            binding.trendingRv.setNestedScrollingEnabled(false);
+//                            binding.trendingRv.setNestedScrollingEnabled(false);
                             binding.trendingRv.setAdapter(new TrendingAdapter(trendingItemList, getContext()));
                             binding.trendingRv.hideShimmerAdapter();
                         }
@@ -579,7 +870,7 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
@@ -606,7 +897,7 @@ public class HomeFragment extends Fragment {
                                     String id = jsonObject.getString("id");
                                     String name = jsonObject.getString("name");
                                     String mrp = jsonObject.getString("mrp");
-                                    String price_per_spot = jsonObject.getString("price_per_spot");
+                                    int price_per_spot = jsonObject.getInt("price_per_spot");
                                     String total_spot = jsonObject.getString("total_spot");
                                     String empty_spot = jsonObject.getString("empty_spot");
                                     String winnig_code = jsonObject.getString("winnig_code");
@@ -622,7 +913,6 @@ public class HomeFragment extends Fragment {
                                         full_status_bool = true;
                                     }
 
-                                    Log.d("getVoucherMainList", "onResponse: Value " + id);
 
                                     VoucherMainModal voucherMainModal = new VoucherMainModal(
                                             "2", empty_spot, total_spot, name, price_per_spot, short_desc, details, id, images,
@@ -639,13 +929,14 @@ public class HomeFragment extends Fragment {
                                 } else {
                                     binding.voucherMainRv.setVisibility(View.VISIBLE);
                                     binding.emptyTxtVoucher.setVisibility(View.GONE);
+                                    //show the arrayList...
 
+
+                                    binding.voucherMainRv.setAdapter(new VoucherMainAdapter(getSortedArrayList(voucherMainList), getContext()));
                                     binding.voucherMainRv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
-                                    binding.voucherMainRv.setNestedScrollingEnabled(false);
-                                    binding.voucherMainRv.setAdapter(new VoucherMainAdapter(voucherMainList, getContext()));
+//                                    binding.voucherMainRv.setNestedScrollingEnabled(false);
                                     binding.voucherMainRv.hideShimmerAdapter();
                                 }
-
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
@@ -670,39 +961,100 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(requireActivity()).add(jsonObjectRequest);
 
     }
-//    @Override
-//    public void onResume() {
-//        super.onResume();
+
+    public static ArrayList<VoucherMainModal> getSortedArrayList(ArrayList<VoucherMainModal> voucherMainList) {
+        ArrayList<VoucherMainModal> voucherNewList = new ArrayList<>();
+        ArrayList<VoucherMainModal> voucherEmptyList = new ArrayList<>();
+        ArrayList<VoucherMainModal> voucherNewList2 = new ArrayList<>();
+
+        // Empty spot sorting
+
+        for (int i = 0; i < voucherMainList.size(); i++) {
+            VoucherMainModal voucher = voucherMainList.get(i);
+
+            if (voucher.getSpotLeftText().equals("0")) {
+
+                voucherEmptyList.add(voucher);
+            } else {
+                voucherNewList.add(voucher);
+
+            }
+        }
+
+        // Price sorting;
+        voucherNewList.sort(new Comparator<VoucherMainModal>() {
+            @Override
+            public int compare(VoucherMainModal voucherMainModal, VoucherMainModal t1) {
+                if (voucherMainModal.getVouPricePerSpot() == t1.getVouPricePerSpot())
+                    return 0;
+                else if (voucherMainModal.getVouPricePerSpot() > t1.getVouPricePerSpot())
+                    return 1;
+                else
+                    return -1;
+            }
+        });
+//        for (int i=0; i<voucherNewList.size()-1; i++){
 //
-//        if (!isFirstTime){
-//            Fragment fragment = new HomeFragment();
-//            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.mainContainer, fragment);
-//            ft.commit();
+////            Log.d("sorting", "getSortedArrayList: loop running times: "+i+" listsize: "+ (voucherMainList.size()-1));
 //
-//        }else {
-//            isFirstTime = false;
+//
+//            VoucherMainModal voucherCurr = voucherNewList.get(i);
+//            VoucherMainModal vouNext = voucherNewList.get(i+1);
+//
+//            int vouCurrSpotPrice = Integer.parseInt(voucherCurr.getVouPricePerSpot());
+//            int vouNxtSpotPrice = Integer.parseInt(vouNext.getVouPricePerSpot());
+//
+//
+//
+//
+//
+////                boolean check = vouNxtSpotPrice > vouCurrSpotPrice;
+////                Log.d("sorting", "getSortedArrayList: sort : "+check);
+////            if (check){
+//////                Collections.swap(voucherNewList,i,(i+1));
+////                Log.d("sorting", "getSortedArrayList: voucherNew list : "+voucherNewList);
+////            }
+//
+//
+//
+//           /* if ((voucherNewList.size()-1)< (i+1)){
+//                // limit exceeds of arrayList
+//                Log.d("sorting", "getSortedArrayList: limit exceeds of array");
+//
+//            }else {*/
+//                // Price sorting;
+//
+//                /*int vouCurrSpotPrice = Integer.parseInt(voucherCurr.getVouPricePerSpot());
+//
+//                for (int j=0; j<voucherNewList.size(); j++){
+//                    VoucherMainModal vouNext = voucherNewList.get(j);
+//                    int vouNxtSpotPrice = Integer.parseInt(vouNext.getVouPricePerSpot());
+//
+//                    if (vouCurrSpotPrice > vouNxtSpotPrice){
+////                        voucherNewList2.add(voucherNew);
+//
+////                        Log.d("sorting", "getSortedArrayList: voucherSpotIndex: "+i+ " voucherNextIndex: "+ j);
+//                        Log.d("sorting", "getSortedArrayList: voucherSpotPrice: "+vouCurrSpotPrice+ " voucherNext: "+ vouNxtSpotPrice);
+////                    Collections.swap(voucherNewList,i,j);
+//                    }
+//                }*/
+//
+//
+////            }
 //        }
-//
-//    }
 
 
-//    @Override
-//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//
-//        Fragment fragment = new HomeFragment();
-//        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//        ft.replace(R.id.mainContainer, fragment);
-//        ft.commit();
-//    }
+        voucherNewList.addAll(voucherEmptyList);
+        Log.d("getSortedArrayList", "getSortedArrayList: vMlistsize: " + voucherMainList.size());
+        return voucherNewList;
+    }
 
 
 }

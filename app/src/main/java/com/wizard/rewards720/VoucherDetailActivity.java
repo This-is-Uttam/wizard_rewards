@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.wizard.rewards720.Adapters.VoucherDetailAdapter;
-import com.wizard.rewards720.Adapters.VoucherMainAdapter;
+import com.wizard.rewards720.Fragments.Home.HomeFragment;
 import com.wizard.rewards720.Modals.VoucherMainModal;
 import com.wizard.rewards720.databinding.ActivityVoucherDetailBinding;
 
@@ -77,7 +76,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
                                     String id = jsonObject.getString("id");
                                     String name = jsonObject.getString("name");
                                     String mrp = jsonObject.getString("mrp");
-                                    String price_per_spot = jsonObject.getString("price_per_spot");
+                                    int price_per_spot = jsonObject.getInt("price_per_spot");
                                     String total_spot = jsonObject.getString("total_spot");
                                     String empty_spot = jsonObject.getString("empty_spot");
                                     String winnig_code = jsonObject.getString("winnig_code");
@@ -93,7 +92,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
                                         full_status_bool= true;
                                     }
 
-                                    Log.d("getVoucherMainList", "onResponse: Value "+id);
+
 
                                     VoucherMainModal voucherMainModal = new VoucherMainModal(
                                             "2",empty_spot,total_spot,name,price_per_spot,short_desc,details,id,images,
@@ -103,7 +102,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
 
                                     voucherMainList.add(voucherMainModal);
                                 }
-
+                                Log.d("getVoucherMainList", "onResponse: Voucher List Size: "+voucherMainList.size());
 //                        checking voucher winners list empty.
                                 if (voucherMainList.size() == 0) {
                                     binding.voucherDetailRv.setVisibility(View.GONE);
@@ -112,7 +111,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
                                     binding.voucherDetailRv.setVisibility(View.VISIBLE);
                                     binding.emptyTxtVoucher.setVisibility(View.GONE);
 
-                                    VoucherDetailAdapter voucherDetailAdapter  = new VoucherDetailAdapter(voucherMainList, VoucherDetailActivity.this);
+                                    VoucherDetailAdapter voucherDetailAdapter  = new VoucherDetailAdapter(HomeFragment.getSortedArrayList(voucherMainList), VoucherDetailActivity.this);
                                     LinearLayoutManager layoutManager = new GridLayoutManager(VoucherDetailActivity.this,2);
                                     binding.voucherDetailRv.setAdapter(voucherDetailAdapter);
                                     binding.voucherDetailRv.setLayoutManager(layoutManager);
@@ -145,7 +144,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(VoucherDetailActivity.this));
                 return header;
             }
         };

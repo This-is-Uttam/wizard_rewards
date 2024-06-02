@@ -23,6 +23,7 @@ public class UpiAppsActivity extends AppCompatActivity {
     int coinPrice;
     public static final String UPI_APP_PACKAGE_INTENT = "UpiPackageIntent";
     ArrayList<PayModeModal> payModelist;
+    private int coinId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,13 @@ public class UpiAppsActivity extends AppCompatActivity {
         upiAppPackageName = getIntent().getStringExtra(UPI_APP_PACKAGE_INTENT);
         coins = getIntent().getFloatExtra("COINS", 0f);
         coinPrice = getIntent().getIntExtra("PRICE", 0);
+        coinId = getIntent().getIntExtra("BUY_COIN_ID", 0);
 
         binding.noOfCoins2.setText((int) coins+"");
         binding.coinPrice2.setText("₹"+coinPrice);
 
 
-        binding.payModeRv.setAdapter(new PayModeAdapter(getListOfUpiApps(),this, coins, coinPrice));
+        binding.payModeRv.setAdapter(new PayModeAdapter(getListOfUpiApps(),this, coins, coinPrice, coinId));
         binding.payModeRv.setLayoutManager(new GridLayoutManager(this,4));
     }
 

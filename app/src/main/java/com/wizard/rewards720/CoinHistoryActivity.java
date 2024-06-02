@@ -108,8 +108,9 @@ public class CoinHistoryActivity extends AppCompatActivity {
                                     String dateMain = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date);
 
 //                                    time format
-                                    Date time = new SimpleDateFormat("hh:mm:ssa", Locale.getDefault()).parse(hisTime);
-                                    String timeMain = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(time);
+//                                    Date time = new SimpleDateFormat("hh:mm:ssa", Locale.getDefault()).parse(hisTime);
+//                                    String timeMain = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(time);
+                                    String timeMain = hisTime;
 
 
                                     boolean isCredited;
@@ -136,8 +137,8 @@ public class CoinHistoryActivity extends AppCompatActivity {
                                 binding.coinHistoryRv.setLayoutManager(new LinearLayoutManager(CoinHistoryActivity.this));
                                 binding.coinHistoryRv.setNestedScrollingEnabled(false);
 
-                                ControlRoom.getInstance().setCoins(response.getInt("ava_coins")+"");
-                                binding.coinTxt.setText(ControlRoom.getInstance().getCoins());
+                                ControlRoom.getInstance().setCoins(response.getInt("ava_coins")+"", CoinHistoryActivity.this);
+                                binding.coinTxt.setText(ControlRoom.getInstance().getCoins(CoinHistoryActivity.this));
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
                                 Log.d("getCoinsHistoryList", "onResponse: response Failed: "+ response.getString("data"));
@@ -145,7 +146,11 @@ public class CoinHistoryActivity extends AppCompatActivity {
                                 binding.progressBar3.setVisibility(View.GONE);
                                 binding.errorImg.setVisibility(View.VISIBLE);
                                 binding.message.setVisibility(View.VISIBLE);
-                                binding.message.setText(response.getString("data"));
+                                String msg = response.getString("data");
+                                if (msg.equals("No coin transaction found!.."))
+                                    binding.message.setText("No Coins history found.");
+                                else
+                                    binding.message.setText(response.getString(msg));
 
                             }else {
                                 Log.d("getCoinsHistoryList", "onResponse: Something went wrong ");
@@ -170,7 +175,7 @@ public class CoinHistoryActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(CoinHistoryActivity.this));
                 return header;
             }
         };

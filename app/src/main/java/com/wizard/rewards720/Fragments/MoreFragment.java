@@ -80,6 +80,8 @@ public class MoreFragment extends Fragment {
     View progressDialog;
     String fullName, userName, email, phone, profilePic;
 
+    public MoreFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,6 +89,7 @@ public class MoreFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentMoreBinding.inflate(inflater, container, false);
 //        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.blue, getActivity().getTheme()));
+
 
 
         binding.moreToolbar.customToolbar.setTitle("More");
@@ -214,6 +217,7 @@ public class MoreFragment extends Fragment {
 
 
         //        editProfileImg
+/*
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -236,7 +240,9 @@ public class MoreFragment extends Fragment {
 
             }
         });
+*/
 
+/*
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -272,6 +278,7 @@ public class MoreFragment extends Fragment {
 
 
         });
+*/
 
 
 //        binding.editProfileImg.setOnClickListener(new View.OnClickListener() {
@@ -328,7 +335,7 @@ public class MoreFragment extends Fragment {
                 .requestIdToken(WEB_CLIENT_ID)
                 .requestEmail()
                 .build();
-        context = container.getContext();
+        context = requireContext();
 
         gsc = GoogleSignIn.getClient(context, gso);
 
@@ -382,14 +389,14 @@ public class MoreFragment extends Fragment {
 
 //        setting User Profile Image
         Picasso.get()
-                .load(ControlRoom.getInstance().getProfilePic())
+                .load(ControlRoom.getInstance().getProfilePic(requireContext()))
                 .placeholder(R.drawable.placeholder)
                 .into(binding.profileImageView);
 
-        fullName = ControlRoom.getInstance().getFullName();
-        userName = ControlRoom.getInstance().getUserName();
-        email = ControlRoom.getInstance().getEmail();
-        phone = ControlRoom.getInstance().getPhone();
+        fullName = ControlRoom.getInstance().getFullName(requireContext());
+        userName = ControlRoom.getInstance().getUserName(requireContext());
+        email = ControlRoom.getInstance().getEmail(requireContext());
+        phone = ControlRoom.getInstance().getPhone(requireContext());
 
         setCurrentUserDetails(fullName, userName, email, phone);
 
@@ -451,7 +458,7 @@ public class MoreFragment extends Fragment {
 
 
                     } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
-                        Log.d("signout token", "signout token: " + accessToken);
+//                        Log.d("signout token", "signout token: " + accessToken);
 
                         Log.d("userSignOut", "onResponse: Failed, data: " + response.getString("data"));
                     } else
@@ -472,7 +479,7 @@ public class MoreFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };

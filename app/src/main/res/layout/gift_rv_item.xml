@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="130dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -77,17 +77,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
-            android:clickable="true">
+            android:clickable="true"
+            android:paddingBottom="8dp">
+
 
             <ImageView
                 android:id="@+id/redeemImg"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="8dp"
+                android:layout_width="0dp"
+                android:layout_height="76dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/flipkart" />
+                app:srcCompat="@drawable/amazon" />
 
             <TextView
                 android:id="@+id/redeemAmt"
@@ -97,7 +102,7 @@
                 android:text="₹100"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:textStyle="normal"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@+id/redeemName"
                 app:layout_constraintStart_toStartOf="@+id/redeemName"
                 app:layout_constraintTop_toBottomOf="@+id/redeemName" />
@@ -126,13 +131,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:drawableRight="@drawable/coins_18dp"
+                android:drawableLeft="@drawable/coins_18dp"
                 android:drawablePadding="8dp"
                 android:fontFamily="sans-serif"
                 android:text="1000"
                 android:textColor="@color/orangeDark"
-                android:textSize="14sp"
-                android:textStyle="normal"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/redeemName"
                 app:layout_constraintStart_toStartOf="@+id/redeemName"

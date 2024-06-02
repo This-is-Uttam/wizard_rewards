@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             tools:context=".Fragments.MoreFragment">
 
-            <!-- TODO: Update blank fragment layout -->
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout7"
                 android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                             android:layout_height="1dp"
                             android:layout_marginTop="16dp"
                             android:background="@color/grey_2"
-                            android:visibility="invisible"
+                            android:visibility="visible"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="parent"
@@ -854,7 +854,7 @@
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/montserrat"
                             android:singleLine="true"
-                            android:text="Shopping &amp; Refund Policy"
+                            android:text="Shipping &amp; Refund Policy"
 
                             android:textColor="@color/black"
                             android:textStyle="bold"
@@ -1030,6 +1030,7 @@
                             android:layout_height="1dp"
                             android:layout_marginTop="24dp"
                             android:background="@color/grey_2"
+                            android:visibility="invisible"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="parent"
@@ -1042,6 +1043,7 @@
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"

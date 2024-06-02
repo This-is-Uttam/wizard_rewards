@@ -24,14 +24,17 @@ public class PayModeAdapter extends RecyclerView.Adapter<PayModeAdapter.Viewhold
     Context context;
     final float coins;
     final int coinPrice;
+    final int coinId;
+
     int lastCheckedPosition = 1;
     RadioButton lastButton;
 
-    public PayModeAdapter(ArrayList<PayModeModal> payModeList, Context context,float coins, int coinPrice) {
+    public PayModeAdapter(ArrayList<PayModeModal> payModeList, Context context, float coins, int coinPrice, int coinId) {
         this.payModeList = payModeList;
         this.context = context;
         this.coins = coins;
         this.coinPrice = coinPrice;
+        this.coinId = coinId;
     }
 
     @NonNull
@@ -54,6 +57,7 @@ public class PayModeAdapter extends RecyclerView.Adapter<PayModeAdapter.Viewhold
                     Intent intent = new Intent(context, PaymentActivity.class);
                     intent.putExtra("COINS", coins);
                     intent.putExtra("PRICE", coinPrice);
+                    intent.putExtra("BUY_COIN_ID", coinId);
                     intent.putExtra("APP_NAME", modeModal.getAppName());
                     intent.putExtra(UPI_APP_PACKAGE_INTENT, packageName);
 

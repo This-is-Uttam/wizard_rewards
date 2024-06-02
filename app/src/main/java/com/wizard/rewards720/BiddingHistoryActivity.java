@@ -147,11 +147,16 @@ public class BiddingHistoryActivity extends AppCompatActivity {
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
                                 Log.d("getBiddinghistoryList", "onResponse: response Failed: " + response.getString("data"));
+                                String text = response.getString("data");
+
                                 binding.frameLayout.setVisibility(View.VISIBLE);
                                 binding.progressBar3.setVisibility(View.GONE);
                                 binding.errorImg.setVisibility(View.INVISIBLE);
                                 binding.message.setVisibility(View.VISIBLE);
                                 binding.message.setText(response.getString("data"));
+                                if (text.equals("No bidding data found!..")){
+                                    binding.message.setText("No Product Shopping History Found!");
+                                }
                             } else {
                                 Log.d("getBiddinghistoryList", "onResponse: something went wrong");
 
@@ -170,7 +175,7 @@ public class BiddingHistoryActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(BiddingHistoryActivity.this));
                 return header;
             }
         };

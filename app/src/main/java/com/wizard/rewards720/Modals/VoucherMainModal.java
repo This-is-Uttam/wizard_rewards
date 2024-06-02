@@ -1,13 +1,14 @@
 package com.wizard.rewards720.Modals;
 
 public class VoucherMainModal {
-    String daysLeftText, spotLeftText, totalSpotText, vouMainItemName, vouPricePerSpot, shortDescription, details, vouMainItemId;
+    String daysLeftText, spotLeftText, totalSpotText, vouMainItemName,  shortDescription, details, vouMainItemId;
     String vouMainItemImg,mrp;
     boolean isSpotFull;
     String winningCode;
+    int vouPricePerSpot;
 
     public VoucherMainModal(String daysLeftText, String spotLeftText, String totalSpotText, String vouMainItemName,
-                            String vouPricePerSpot, String shortDescription, String details, String vouMainItemId,
+                            int vouPricePerSpot, String shortDescription, String details, String vouMainItemId,
                             String vouMainItemImg, boolean isSpotFull, String winningCode) {
         this.daysLeftText = daysLeftText;
         this.spotLeftText = spotLeftText;
@@ -70,11 +71,11 @@ public class VoucherMainModal {
         this.vouMainItemName = vouMainItemName;
     }
 
-    public String getVouPricePerSpot() {
+    public int getVouPricePerSpot() {
         return vouPricePerSpot;
     }
 
-    public void setVouPricePerSpot(String vouPricePerSpot) {
+    public void setVouPricePerSpot(int vouPricePerSpot) {
         this.vouPricePerSpot = vouPricePerSpot;
     }
 

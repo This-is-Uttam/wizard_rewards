@@ -10,8 +10,10 @@ import static com.wizard.rewards720.Fragments.CoinFragment.unityAdUnitIdReward;
 import static com.wizard.rewards720.LoginActivity.accessToken;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,7 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.MaxReward;
 import com.applovin.mediation.MaxRewardedAdListener;
 import com.applovin.mediation.ads.MaxRewardedAd;
+import com.wizard.rewards720.Fragments.CoinFragment;
 import com.wizard.rewards720.databinding.ActivitySpinWheelBinding;
 import com.unity3d.ads.IUnityAdsLoadListener;
 import com.unity3d.ads.IUnityAdsShowListener;
@@ -52,7 +55,7 @@ public class SpinWheelActivity extends AppCompatActivity {
     public static final int TO_DEGREES = 4320;
     public static final int BASE_DEGREES = 36;
     int spinPosition;
-    String p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
+    static String p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 = "";
     boolean isSpinAvailable;
 
     MaxRewardedAd myRewardedAd;
@@ -71,7 +74,10 @@ public class SpinWheelActivity extends AppCompatActivity {
 
         binding.youWon.setVisibility(View.GONE);
 
+        binding.spinBtn.setClickable(false);
+
         getSpinnerData();
+
 
 
 
@@ -111,12 +117,25 @@ public class SpinWheelActivity extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
 
+                             SharedPreferences sp = getSharedPreferences("SPINNER_DATA", MODE_PRIVATE);
+                            String p1  = sp.getString("p1","0");
+                            String p2  = sp.getString("p2","0");
+                            String p3  = sp.getString("p3","0");
+                            String p4  = sp.getString("p4","0");
+                            String p5  = sp.getString("p5","0");
+                            String p6  = sp.getString("p6","0");
+                            String p7  = sp.getString("p7","0");
+                            String p8  = sp.getString("p8","0");
+                            String p9  = sp.getString("p9","0");
+                            String p10  = sp.getString("p10","0");
+//                            Log.d("booom", "onAnimationEnd: Spin/wheel points : "+test +" points2: "+ test2);
+
                             binding.youWon.setScaleX(0f);
                             binding.youWon.setScaleY(0f);
 
 //                            binding.spinWinAnim.l
 
-//      Getting Positions of spin wheel.....
+//                          Getting Positions of spin wheel.....
                             switch (spinPosition) {
                                 case 1:
                                     if (p1.equals("0")) {
@@ -302,71 +321,7 @@ public class SpinWheelActivity extends AppCompatActivity {
             }
         });
 
-/*
-        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                myRewardedAd = null;
-                Log.d("Ads", "onAdFailedToLoad: Failed to load ad");
-            }
 
-            @Override
-            public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                super.onAdLoaded(rewardedAd);
-                myRewardedAd = rewardedAd;
-
-                myRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdClicked() {
-                        super.onAdClicked();
-                    }
-
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        super.onAdDismissedFullScreenContent();
-
-                        binding.spinWinAnim.setAnimation(R.raw.spin_win_anim);
-                        binding.spinWinAnim.playAnimation();
-
-                        binding.youWon.setVisibility(View.VISIBLE);
-//                            binding.youWonCoins.setText(binding.t1.getText().toString());
-                        binding.youWon.animate().scaleXBy(1f).scaleYBy(1f).setDuration(1000).start();
-
-                        // Sending position data to server....
-                        sendSpinPositionToServer(spinPosition);
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(SpinWheelActivity.this, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-                                overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
-                                finish();
-                            }
-                        }, 3000);
-
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                        super.onAdFailedToShowFullScreenContent(adError);
-                    }
-
-                    @Override
-                    public void onAdImpression() {
-                        super.onAdImpression();
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        super.onAdShowedFullScreenContent();
-                    }
-                });
-            }
-        });
-*/
 
 //       App Lovin Rewarded ad start.........
         loadRewardedAd();
@@ -491,6 +446,9 @@ public class SpinWheelActivity extends AppCompatActivity {
 
 //                        Toast.makeText(RedeemViewActivity.this, ""+response.getString("data"), Toast.LENGTH_SHORT).show();
 //                        finish();
+//                        CoinFragment coinFragment = new CoinFragment();
+//                                coinFragment.updateCoins();
+//                                coinFragment.getSpinnerDataFrag();
 
 
                     } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
@@ -515,7 +473,7 @@ public class SpinWheelActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(SpinWheelActivity.this));
                 return header;
             }
         };
@@ -547,16 +505,31 @@ public class SpinWheelActivity extends AppCompatActivity {
                                 }
 
 
-                                p1 = spinner.getString("p1");
-                                p2 = spinner.getString("p2");
-                                p3 = spinner.getString("p3");
-                                p4 = spinner.getString("p4");
-                                p5 = spinner.getString("p5");
-                                p6 = spinner.getString("p6");
-                                p7 = spinner.getString("p7");
-                                p8 = spinner.getString("p8");
-                                p9 = spinner.getString("p9");
-                                p10 = spinner.getString("p10");
+                                String p1 = spinner.getString("p1");
+                                String p2 = spinner.getString("p2");
+                                String p3 = spinner.getString("p3");
+                                String p4 = spinner.getString("p4");
+                                String p5 = spinner.getString("p5");
+                                String p6 = spinner.getString("p6");
+                                String p7 = spinner.getString("p7");
+                                String p8 = spinner.getString("p8");
+                                String p9 = spinner.getString("p9");
+                                String p10 = spinner.getString("p10");
+
+                                // set values in shared preference
+
+                                getSharedPreferences("SPINNER_DATA", MODE_PRIVATE).edit()
+                                        .putString("p1", p1)
+                                        .putString("p2", p2)
+                                        .putString("p3", p3)
+                                        .putString("p4", p4)
+                                        .putString("p5", p5)
+                                        .putString("p6", p6)
+                                        .putString("p7", p7)
+                                        .putString("p8", p8)
+                                        .putString("p9", p9)
+                                        .putString("p10", p10)
+                                        .apply();
 
                                 if (p1.equals("0")) {
                                     binding.t1.setText("Better Luck Next Time");
@@ -650,6 +623,9 @@ public class SpinWheelActivity extends AppCompatActivity {
                                     Drawable drawable = getBaseContext().getResources().getDrawable(R.drawable.coins_18dp, getTheme());
                                     binding.t10.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
                                 }
+                                // Enable spin button
+                                binding.spinBtn.setClickable(true);
+
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
@@ -677,7 +653,7 @@ public class SpinWheelActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(SpinWheelActivity.this));
                 return header;
             }
         };
@@ -703,4 +679,5 @@ public class SpinWheelActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
         finish();
     }
+
 }

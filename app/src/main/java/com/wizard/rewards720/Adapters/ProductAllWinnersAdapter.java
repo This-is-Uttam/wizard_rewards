@@ -43,6 +43,7 @@ public class ProductAllWinnersAdapter extends RecyclerView.Adapter<ProductAllWin
         holder.binding.prodWinnerName.setText(modal.getUserName());
         holder.binding.prodWinningPrice.setText(modal.getProductName());
         holder.binding.prodWinPriceValue.setText("₹" + modal.getMrp());
+        holder.binding.winMonth.setText(modal.getWinMonth());
 
         String prodImg = Constants.PRODUCT_IMG_URL + modal.getProductImage();
         Picasso.get()

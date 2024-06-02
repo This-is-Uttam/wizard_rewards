@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat"
-                android:text="Mobile Phone"
+                android:text="Smart Watch"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
         </TableRow>
@@ -122,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat"
-                android:text="Blutooth Earphone"
+                android:text="Smart Watch"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
         </TableRow>
@@ -135,6 +135,7 @@
                 android:id="@+id/imageView19"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:srcCompat="@drawable/right_arrow" />
 
             <TextView
@@ -144,7 +145,8 @@
                 android:fontFamily="@font/montserrat"
                 android:text="Rank 4 : "
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textView54"
@@ -152,9 +154,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat"
-                android:text="Neck Band"
+                android:text="Smart Watch"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
         </TableRow>
 
         <TableRow
@@ -172,7 +175,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat"
-                android:text="Rank 5-10 : "
+                android:text="Rank 4-10 : "
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -182,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat"
-                android:text="Earphones"
+                android:text="Blutooth Neckband"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
         </TableRow>
@@ -194,6 +197,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Note: Leaderboard will be revised every month"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

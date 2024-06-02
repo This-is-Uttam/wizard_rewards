@@ -19,6 +19,7 @@ import com.wizard.rewards720.databinding.PromotionRvItemBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Viewholder> {
     ArrayList<PromotionModal> promotionList;
@@ -29,6 +30,8 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
     public PromotionAdapter(ArrayList<PromotionModal> promotionList, Context context) {
         this.promotionList = promotionList;
         this.context = context;
+
+
     }
 
 

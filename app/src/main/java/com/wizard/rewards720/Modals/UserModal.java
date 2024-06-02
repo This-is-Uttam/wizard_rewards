@@ -1,8 +1,16 @@
 package com.wizard.rewards720.Modals;
 
 public class UserModal {
-    String fullName, userName, email, profilePic, userFirstLetter, coins, phone, referCode;
+    String fullName, userName, email, profilePic, userFirstLetter, coins,diamonds, phone, referCode;
     int totalRefer;
+
+    public String getDiamonds() {
+        return diamonds;
+    }
+
+    public void setDiamonds(String diamonds) {
+        this.diamonds = diamonds;
+    }
 
     public String getFullName() {
         return fullName;

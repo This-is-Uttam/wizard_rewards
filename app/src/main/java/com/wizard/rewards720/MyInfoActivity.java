@@ -50,7 +50,7 @@ public class MyInfoActivity extends AppCompatActivity {
 //        binding.submitButton.setClickable(false);
 
 
-        binding.nameInputLayout.getEditText().setText(ControlRoom.getInstance().getFullName());
+        binding.nameInputLayout.getEditText().setText(ControlRoom.getInstance().getFullName(MyInfoActivity.this));
         setUserDetails();
 
 
@@ -113,6 +113,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
     private void setUserDetails() {
         binding.myInfoProgress.setVisibility(View.VISIBLE);
+        binding.myInfoLayou.setClickable(false);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.USER_API_URL, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -121,6 +122,7 @@ public class MyInfoActivity extends AppCompatActivity {
                             if (response.getBoolean("status") && response.getInt("code") == 200) {
                                 Log.d("setUserDetails", "onResponse: response is Successful " + response.getString("data"));
                                 binding.myInfoProgress.setVisibility(View.GONE);
+                                binding.myInfoLayou.setClickable(true);
                                 JSONObject jsonObject = response.getJSONObject("data");
 
                                 String fullName = jsonObject.getString("name");
@@ -182,7 +184,7 @@ public class MyInfoActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(MyInfoActivity.this));
                 return header;
             }
 
@@ -265,7 +267,7 @@ public class MyInfoActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(MyInfoActivity.this));
                 return header;
             }
 

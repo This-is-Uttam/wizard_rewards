@@ -7,11 +7,11 @@ import static com.wizard.rewards720.Constants.CONTENT_TYPE;
 import static com.wizard.rewards720.Constants.CONTENT_TYPE_VALUE;
 import static com.wizard.rewards720.Constants.DIAMONDS;
 import static com.wizard.rewards720.Constants.USER_API_URL;
-import static com.wizard.rewards720.LoginActivity.accessToken;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +45,22 @@ import com.applovin.mediation.ads.MaxRewardedAd;
 import com.ayetstudios.publishersdk.AyetSdk;
 import com.ayetstudios.publishersdk.interfaces.UserBalanceCallback;
 import com.ayetstudios.publishersdk.messages.SdkUserBalance;
+//import com.prodege.Prodege;
+//import com.prodege.builder.AdRequest;
+//import com.prodege.listener.ProdegeException;
+//import com.prodege.listener.ProdegeRewardedInfo;
+//import com.prodege.listener.ProdegeRewardedLoadListener;
+import com.pubscale.sdkone.offerwall.OfferWall;
+import com.pubscale.sdkone.offerwall.OfferWallConfig;
+import com.pubscale.sdkone.offerwall.models.OfferWallInitListener;
+import com.pubscale.sdkone.offerwall.models.OfferWallListener;
+import com.pubscale.sdkone.offerwall.models.Reward;
+import com.pubscale.sdkone.offerwall.models.errors.InitError;
+import com.startapp.sdk.ads.banner.Banner;
+import com.startapp.sdk.adsbase.Ad;
+import com.startapp.sdk.adsbase.StartAppAd;
+import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
+import com.startapp.sdk.adsbase.adlisteners.VideoListener;
 import com.wizard.rewards720.Adapters.BuyCoinAdapter;
 import com.wizard.rewards720.Adapters.WatchVidAdapter;
 import com.wizard.rewards720.ButtonClickListener;
@@ -57,6 +73,7 @@ import com.wizard.rewards720.Modals.WatchVidModal;
 import com.wizard.rewards720.R;
 import com.wizard.rewards720.ScratchWinActivity;
 import com.wizard.rewards720.SpinWheelActivity;
+import com.wizard.rewards720.TrakierActivity;
 import com.wizard.rewards720.databinding.FragmentCoinBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -92,18 +109,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import ai.bitlabs.sdk.BitLabs;
-import ai.bitlabs.sdk.data.model.Survey;
+//import ai.bitlabs.sdk.util.OnExceptionListener;
 import ai.bitlabs.sdk.util.OnResponseListener;
-import ai.bitlabs.sdk.util.OnRewardListener;
 import theoremreach.com.theoremreach.TheoremReach;
 import theoremreach.com.theoremreach.TheoremReachRewardListener;
 
 
 public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
+
     FragmentCoinBinding binding;
     ArrayList<BuyCoinModal> buyCoinList;
     BitLabs bitLabs;
+    private static String uID;
     GoogleSignInAccount account;
     MaxInterstitialAd myInterstitialAd;
     Dialog dailyCheckInDialog;
@@ -116,8 +134,8 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
     Activity activity;
 
     //    AppLovin AdUnit Id:
-    public final static String appLovinAdUnitIdInter = "0427e43674805933";
-    public final static String appLovinAdUnitIdReward = "9aa2a13e957c630f";
+    public final static String appLovinAdUnitIdInter = "87a13cc4487613ac";//"0427e43674805933";
+    public final static String appLovinAdUnitIdReward = "80f208aa816ebd9c";//"9aa2a13e957c630f";
 
     public static final String BITLAB_API_TOKEN = "5ad285b7-65e6-4c20-b3c9-5a0fa16bee54";
 
@@ -132,20 +150,28 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
     public static final String THEOREMREACH_API_KEY = "dfcdb0f44865db3fd154dd423108";
 
     public static final String POLLFISH_API_KEY = "edd0dc80-7137-4f4c-aa89-840ae6cf573d";
-    private int retryAttempt=0;
+    public static final String POLLFISH_SURVEY_OFFERS_PLAC_ID = "388d2e91-c052-4ba7-b661-302e60093837";
+    public static final String POLLFISH_PROEDGE_REWARD_AD_PLAC_ID = "4823a0b7-fb3c-470c-8da7-731ec41adfe5";
 
+    StartAppAd startIoVideoAd;
+
+    public static final String PUBSCALE_APP_ID = "38344024";
+    private int retryAttempt = 0;
+
+    public CoinFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         binding = FragmentCoinBinding.inflate(inflater, container, false);
 
 //        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.blue, getContext().getTheme()));
         binding.drawToolbar.setTitle("Get Coins");
-        binding.drawToolbar.setTitleTextColor(getResources().getColor(R.color.whiteOnly, requireContext().getTheme()));
-
-        activity = getActivity();
+        activity = requireActivity();
+        binding.drawToolbar.setTitleTextColor(getResources().getColor(R.color.whiteOnly, activity.getTheme()));
 
 
 
@@ -153,21 +179,28 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         binding.swipeRefreshCoinFrag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshFragment();
+//                refreshFragment();
 
+                updateCoins();
+                getBuyCoinsList();
+                getSpinnerDataFrag();
+                getScratchDetailsFromServerFrag();
+                getDailyCheckInDataEligibilityFrag();
+                getWatchVideoList();
+
+                //all eligibility
+                checkStartIoEligibility();
+//                checkProedgeEligible();
+
+            binding.swipeRefreshCoinFrag.setRefreshing(false);
             }
         });
 
         updateCoins();
-//        binding.coinTxt.setText(COINS+"");
-//        binding.diamondTv.setText(ControlRoom.getInstance().getDiamonds());
 
-        account = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
-
+        account = GoogleSignIn.getLastSignedInAccount(activity);
 
 //        buyCoinRv
-
-
         getBuyCoinsList();
 
 
@@ -175,29 +208,25 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
 
         // BITLABS
+        String uid =ControlRoom.getInstance().getId(activity);
+        Log.d("idid", "onCreateView: idid: "+ uid);
         bitLabs = BitLabs.INSTANCE;
-        bitLabs.init(BITLAB_API_TOKEN, ControlRoom.getInstance().getId());
+        if (uid != null){
+            bitLabs.init(BITLAB_API_TOKEN, uid);
+        }
 
         binding.bitlabOfferwall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (bitLabs != null) {
-                    bitLabs.launchOfferWall(getContext());
+                    bitLabs.launchOfferWall(activity);
                 } else
-                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
 
 
             }
         });
 
-        bitLabs.setOnRewardListener(new OnRewardListener() {
-            @Override
-            public void onReward(float coins) {
-                int coinInt = (int) coins;
-                int availableCoins = Integer.parseInt(binding.coinTxt.getText().toString());
-                binding.coinTxt.setText(String.valueOf(availableCoins + coinInt));
-            }
-        });
 
         bitLabs.checkSurveys(new OnResponseListener<Boolean>() {
             @Override
@@ -216,21 +245,10 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             }
         });
 
-        bitLabs.getSurveys(new OnResponseListener<List<Survey>>() {
-            @Override
-            public void onResponse(@Nullable List<Survey> surveys) {
-                if (surveys == null) {
-                    Log.d("BitlabsSurveys", "onResponse: gett surveyss");
-                } else {
-                    for (Survey survey :
-                            surveys) {
-                        Log.d("BitlabsSurveys", "onResponse: allSurveyy here: " + survey.getId());
-
-                    }
-                }
-            }
+//        Trakier Offers
+        binding.trakierOffer.setOnClickListener(view -> {
+            startActivity(new Intent(activity, TrakierActivity.class));
         });
-
 
        /*The types of personal information we may collect via our surveys include your name, IP address, email address, zip code,
         address, phone number, demographic information (age, household income, family size, highest education completed),
@@ -238,9 +256,8 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
        race or ethnic origin, political opinions, religious beliefs, membership information, and gender may also be collected.*/
 
 //      TheoremReach Rewards Center
-//        Log.d("TheoremReach", "onReward: : "+ quantity);
         TheoremReach.initWithApiKeyAndUserIdAndActivityContext(THEOREMREACH_API_KEY,
-                ControlRoom.getInstance().getId(), getActivity());
+                ControlRoom.getInstance().getId(activity), getActivity());
         binding.theoremReachCenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,8 +280,8 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         });
 
 //        AyetStudios
-        Log.d("AyetSdk", "onCreateView: ayet userid: " + ControlRoom.getInstance().getId());
-        AyetSdk.init(getActivity().getApplication(), ControlRoom.getInstance().getId(), new UserBalanceCallback() {
+        Log.d("AyetSdk", "onCreateView: ayet userid: " + ControlRoom.getInstance().getId(activity));
+        AyetSdk.init(getActivity().getApplication(), ControlRoom.getInstance().getId(activity), new UserBalanceCallback() {
             @Override
             public void userBalanceChanged(SdkUserBalance sdkUserBalance) {
                 Log.d("AyetSdk", "userBalanceChanged - available balance: " + sdkUserBalance.getAvailableBalance()); // this is the new total available balance for the user
@@ -286,7 +303,6 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             }
         }, AYET_APP_KEY);
 
-        Log.d("AyetSdk", "onCreateView: Ayet Pending Balance: " + AyetSdk.getPendingBalance(getContext()));
 
 
         binding.ayetOfferwall.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +319,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
 //        Cpa Lead offerwall
 
-        String cpaUrl = "https://fastsvr.com/list/509844" + "&subid=" + ControlRoom.getInstance().getId();
+        String cpaUrl = "https://fastsvr.com/list/509844" + "&subid=" + ControlRoom.getInstance().getId(activity);
 
         binding.cpaOfferwall.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,14 +334,15 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         Params params = new Params.Builder(POLLFISH_API_KEY)
                 .rewardMode(true)
                 .releaseMode(true)
-                .userId(ControlRoom.getInstance().getId())
-                .requestUUID(ControlRoom.getInstance().getId())
+                .userId(ControlRoom.getInstance().getId(activity))
+                .requestUUID(ControlRoom.getInstance().getId(activity))
+                .placementId(POLLFISH_SURVEY_OFFERS_PLAC_ID)
+                .clickId(ControlRoom.getInstance().getId(activity))
                 .offerwallMode(true)
-                .clickId(ControlRoom.getInstance().getId())
                 .pollfishSurveyCompletedListener(new PollfishSurveyCompletedListener() {
                     @Override
                     public void onPollfishSurveyCompleted(@NonNull SurveyInfo surveyInfo) {
-                        Toast.makeText(getContext(), "Pollfish Survey completed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Pollfish Survey completed", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .build();
@@ -336,9 +353,58 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             @Override
             public void onClick(View view) {
                 Pollfish.show();
-
             }
         });
+
+        // Proedge Rewarded Videos.
+        // Proedge Initialization is done in MainActivity.java
+
+        //proedge check
+//        Pollfish Video Ad
+//        checkProedgeEligible();
+
+//        loadProedge();
+//        binding.pollfishVidAd.setVisibility(View.VISIBLE);
+
+        binding.pollfishVidAd.setOnClickListener(view -> {
+//            showStartIoRewardedVideo();
+
+//            Prodege.showPlacement(POLLFISH_PROEDGE_REWARD_AD_PLAC_ID, new ProdegeShowListener() {
+//                @Override
+//                public void onOpened(@NonNull String s) {
+//                    Log.d("ProedgeAds", "onOpened: ");
+//
+//                }
+//
+//                @Override
+//                public void onClosed(@NonNull String s) {
+//                    Log.d("ProedgeAds", "onClosed: ");
+//                    loadProedge();
+////                    updateCoins();
+//                    claimProedge();
+//                }
+//
+//                @Override
+//                public void onShowFailed(@NonNull String s, @NonNull ProdegeException e) {
+//                    Log.d("ProedgeAds", "onShowFailed: " + e.getMessage());
+//                    Toast.makeText(getContext(), "Failed to show Ad, Try again later.", Toast.LENGTH_SHORT).show();
+//                }
+//            }, null);
+
+
+        });
+
+
+        startIoVideoAd = new StartAppAd(requireContext());
+        // check start.io eligibility
+        checkStartIoEligibility();
+
+        // Start.io Ad
+        binding.startAppAd.setOnClickListener(view -> {
+            showStartIoRewardedVideo();
+        });
+
+
 
 //        CPX Researchs Offerwall
         CPXStyleConfiguration style = new CPXStyleConfiguration(SurveyPosition.SideLeftSmall,
@@ -349,7 +415,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                 true);
 
         CPXConfiguration config = new CPXConfigurationBuilder(CpxResearchAppId,
-                ControlRoom.getInstance().getId(), CpxResearchSecureHash,
+                ControlRoom.getInstance().getId(activity), CpxResearchSecureHash,
                 style)
                 .build();
 //        CPXHash.Companion.md5()
@@ -413,23 +479,12 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
 //        InBrain Offerwall
 
-        InBrain.getInstance().setInBrain(getContext(), IN_BRAIN_CLIENT_ID, IN_BRAIN_SECRET_KEY, true,
-                ControlRoom.getInstance().getUserName());     //Using UserName instead of UserId because it is required to use more than one character.
+        InBrain.getInstance().setInBrain(activity, IN_BRAIN_CLIENT_ID, IN_BRAIN_SECRET_KEY, true,
+                ControlRoom.getInstance().getUserName(requireContext()));     //Using UserName instead of UserId because it is required to use more than one character.
 //          InBrain Initialization is done in SplashScreenActivity
-        Log.d("InBrain", "onCreate: Username: " + ControlRoom.getInstance().getUserName());
+        Log.d("InBrain", "onCreate: Username: " + ControlRoom.getInstance().getUserName(requireContext()));
         
-        
-    /*    InBrain.getInstance().addCallback(new InBrainCallback() {
-            @Override
-            public void surveysClosed(boolean b, List<InBrainSurveyReward> list) {
-            }
 
-            @Override
-            protected void onDestroy() {
-                InBrain.getInstance().removeCallback(th); // unsubscribe from events
-                super.onDestroy();
-            }
-        });*/
 
         ToolBarConfig toolBarConfig = new ToolBarConfig();
         toolBarConfig.setTitle("InBrain Offerwall"); // set title
@@ -457,7 +512,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         }
         InBrain.getInstance().setStatusBarConfig(statusBarConfig);
 
-        InBrain.getInstance().areSurveysAvailable(getContext(), new SurveysAvailableCallback() {
+        InBrain.getInstance().areSurveysAvailable(activity, new SurveysAvailableCallback() {
             @Override
             public void onSurveysAvailable(boolean surveyAvailable) {
                 if (surveyAvailable) {
@@ -477,7 +532,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 //                Are Surveys Available..?
 
 
-                InBrain.getInstance().showSurveys(getContext(), new StartSurveysCallback() {
+                InBrain.getInstance().showSurveys(activity, new StartSurveysCallback() {
                     @Override
                     public void onSuccess() {
                         Log.d("InBrain", "onSuccess: InBrain Offerwall is showing");
@@ -494,6 +549,56 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             }
         });
 
+//        // Pubscale Offerwall
+//        OfferWallConfig offerWallConfig =
+//                new OfferWallConfig.Builder(activity, PUBSCALE_APP_ID)
+//                        .setUniqueId(ControlRoom.getInstance().getId(activity)) //optional, used to represent the user of your application
+////                        .setLoaderBackgroundBitmap(backgroundBitmap)//optional
+////                        .setLoaderForegroundBitmap(foregroundBitmap)//optional
+//                        .setFullscreenEnabled(false)//optional
+//                        .build();
+//
+//        // Pubscale Initialization
+//        OfferWall.init(offerWallConfig, new OfferWallInitListener() {
+//            @Override
+//            public void onInitSuccess() {
+//                Log.d("pubscale", "onInitSuccess: Pubscale init success");
+//            }
+//
+//            @Override
+//            public void onInitFailed(@NonNull InitError error) {
+//                Log.d("pubscale", "onInitFailed: Pubscale init Failed: "+ error.getMessage());
+//            }
+//        });
+
+        binding.pubscaleOfferwall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OfferWall.launch(activity, new OfferWallListener() {
+                    @Override
+                    public void onOfferWallShowed() {
+                        
+                    }
+
+                    @Override
+                    public void onOfferWallClosed() {
+
+                    }
+
+                    @Override
+                    public void onRewardClaimed(Reward reward) {
+                        Log.d("pubscale", "onRewardClaimed: currency: " + reward.getCurrency()+ "components: "+reward.component1()+reward.component2()+reward.component3());
+                        Toast.makeText(activity, "Pubscale Reward Coins added successfully! "+reward.getAmount()+" coins" , Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailed(String s) {
+                        Toast.makeText(activity, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
 //        Offer-walls ends here
 
 
@@ -503,7 +608,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         binding.spinWin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), SpinWheelActivity.class));
+                startActivity(new Intent(activity, SpinWheelActivity.class));
                 if (myInterstitialAd.isReady()) {
 
                     myInterstitialAd.showAd();
@@ -540,7 +645,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         binding.scratchWin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), ScratchWinActivity.class));
+                startActivity(new Intent(activity, ScratchWinActivity.class));
                 if (myInterstitialAd.isReady()) {
 
                     myInterstitialAd.showAd();
@@ -556,14 +661,14 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         binding.coinTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), CoinHistoryActivity.class));
+                startActivity(new Intent(activity, CoinHistoryActivity.class));
             }
         });
 //        Go to diamond Activity
         binding.diamondTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), DiamondHistoryActivity.class));
+                startActivity(new Intent(activity, DiamondHistoryActivity.class));
             }
         });
 
@@ -583,8 +688,6 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             binding.spinWin.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.disable_button_bg, activity.getTheme()));
             binding.spinWin.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
         }
-//        binding.spinWin.setBackground(getResources().getDrawable(R.drawable.disable_button_bg, getActivity().getTheme()));
-//        binding.spinWin.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
 //        Spin btn check
         getSpinnerDataFrag();
 
@@ -595,14 +698,12 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             binding.dailyCheckInBtn.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.disable_button_bg, activity.getTheme()));
             binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
         }
-//        binding.dailyCheckInBtn.setBackground(getResources().getDrawable(R.drawable.disable_button_bg, getActivity().getTheme()));
-//        binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
 //        check daily CheckIn
-        getDailyCheckInDataFrag();
+        getDailyCheckInDataEligibilityFrag();
 
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.daily_check_in_dailog, null);
+        View view = LayoutInflater.from(activity).inflate(R.layout.daily_check_in_dailog, null);
         TextView claimBtn = view.findViewById(R.id.claimDailyReward);
-        dailyCheckInDialog = new Dialog(getContext(), R.style.CustomDialog);
+        dailyCheckInDialog = new Dialog(activity, R.style.CustomDialog);
         dailyCheckInDialog.setContentView(view);
         binding.dailyCheckInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -614,9 +715,43 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         claimBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                claimDailyCheckin();
+//                claimDailyCheckin();
+                UnityAds.show(activity, unityAdUnitIdReward, new IUnityAdsShowListener() {
+                    @Override
+                    public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+
+                    }
+
+                    @Override
+                    public void onUnityAdsShowStart(String placementId) {
+
+                    }
+
+                    @Override
+                    public void onUnityAdsShowClick(String placementId) {
+
+                    }
+
+                    @Override
+                    public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+                        claimDailyCheckin();
+                        UnityAds.load(unityAdUnitIdReward, new IUnityAdsLoadListener() {
+                            @Override
+                            public void onUnityAdsAdLoaded(String placementId) {
+
+                            }
+
+                            @Override
+                            public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
+
+                            }
+                        });
+                    }
+                });
             }
         });
+
+
 //                Mobile Ad Initialisation....
 
         Log.d("AppLovin", "onCreateView: coin fragment");
@@ -635,8 +770,419 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 //        watch Video....
         getWatchVideoList();
 
+        // Start.io Ad initialization in SSA;
+//        loadStartIoAd();   this loads after cheking eligibility
+
+
+//        Banner startAppBanner = binding.startAppBanner;
+//        startAppBanner.loadAd(startAppBanner.getWidthInDp(), startAppBanner.getHeightInDp());
+//        startAppBanner.showBanner();
+
 
         return binding.getRoot();
+    }
+
+    private void loadStartIoAd() {
+
+        startIoVideoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
+            @Override
+            public void onReceiveAd(Ad ad) {
+                Log.d("startio", "onReceiveAd: start io loaded ad"+" Is ad ready? "+ startIoVideoAd.isReady());
+//                startIoVideoAd.showAd();
+//                Toast.makeText(activity, "Start.io Ad is Ready", Toast.LENGTH_SHORT).show();
+                // send data to server here
+            }
+
+            @Override
+            public void onFailedToReceiveAd(Ad ad) {
+                // Can't show Start.io rewarded video Ad.
+                Log.d("startio", "onReceiveAd: start io Not loaded ad"+ ad.getErrorMessage()+" Is ad ready? "+ startIoVideoAd.isReady());
+//                Toast.makeText(activity, "Start.io Ad is NOT Ready", Toast.LENGTH_SHORT).show();
+                //UnityAd
+
+//                UnityAds.show(getActivity(), unityAdUnitIdReward, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+//                    @Override
+//                    public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+//                        Log.d("UnityAd", "onUnityAdsShowFailure: failed: " + message);
+//                    }
+//
+//                    @Override
+//                    public void onUnityAdsShowStart(String placementId) {
+//                        Log.d("UnityAd", "onUnityAdsShowStart: ");
+//                    }
+//
+//                    @Override
+//                    public void onUnityAdsShowClick(String placementId) {
+//                        Log.d("UnityAd", "onUnityAdsShowClick: ");
+//
+//                    }
+//
+//                    @Override
+//                    public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+//                        Log.d("UnityAd", "onUnityAdsShowComplete: ");
+//                        loadUnityRewardedAd();
+//                        // send data to server here
+//                        // and after that refresh coins
+//                        claimStartIoReward();
+//
+//
+//                    }
+//                });
+
+            }
+        });
+
+        startIoVideoAd.setVideoListener(new VideoListener() {
+            @Override
+            public void onVideoCompleted() {
+                // Grant the reward to user
+                // Toast.makeText(activity, "Video completed", Toast.LENGTH_SHORT).show();
+                claimStartIoReward();
+            }
+        });
+    }
+
+    private void checkStartIoEligibility() {
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.START_IO_ELIGIBILITY,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
+
+
+                                binding.startAppAd.setVisibility(View.VISIBLE);
+                                loadStartIoAd();
+
+
+                                Log.d("checkStartIoEligibility", "onResponse: response Sucess: " + response.getString("data"));
+
+                                JSONObject data = response.getJSONObject("data");
+
+                                boolean dailyCheckIn = data.getBoolean("dayily_limit");     //"dayily_limit" = does user have any attempt available
+
+                                if (dailyCheckIn) {
+                                    binding.startAppAd.setClickable(true);
+                                    if (activity != null && isAdded()) {
+                                        binding.startAppAd.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.button_bg, activity.getTheme()));
+                                        binding.startAppAd.setBackgroundTintList(ColorStateList.valueOf(ResourcesCompat.getColor(activity.getResources(),R.color.orangeDark, activity.getTheme())));
+                                        binding.startAppAd.setTextColor(getResources().getColor(R.color.white, requireActivity().getTheme()));
+                                    }
+                                } else {
+                                    binding.startAppAd.setClickable(false);
+                                    if (activity != null && isAdded()) {
+                                        binding.startAppAd.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.disable_button_bg, activity.getTheme()));
+                                        binding.startAppAd.setBackgroundTintList(ColorStateList.valueOf(ResourcesCompat.getColor(activity.getResources(),R.color.orange_dull_2, activity.getTheme())));
+
+                                        binding.startAppAd.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
+                                    }
+                                }
+
+                            } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
+                                Log.d("checkStartIoEligibility", "onResponse: response Failed: " + response.getString("data"));
+
+                            } else {
+                                Log.d("checkStartIoEligibility", "onResponse: something went wrong");
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("checkStartIoEligibility", "onResponse: error response: " + error.getMessage());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> header = new HashMap<>();
+                header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
+                return header;
+            }
+        };
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
+
+    }
+
+    public void showStartIoRewardedVideo() {
+
+
+        if (startIoVideoAd.isReady()){
+                startIoVideoAd.showAd();
+
+        }else {
+            //UnityAd
+
+                UnityAds.show(getActivity(), unityAdUnitIdReward, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+                    @Override
+                    public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+                        Log.d("UnityAd", "onUnityAdsShowFailure: failed: " + message);
+                    }
+
+                    @Override
+                    public void onUnityAdsShowStart(String placementId) {
+                        Log.d("UnityAd", "onUnityAdsShowStart: ");
+                    }
+
+                    @Override
+                    public void onUnityAdsShowClick(String placementId) {
+                        Log.d("UnityAd", "onUnityAdsShowClick: ");
+
+                    }
+
+                    @Override
+                    public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+                        Log.d("UnityAd", "onUnityAdsShowComplete: ");
+                        loadUnityRewardedAd();
+                        // send data to server here
+                        // and after that refresh coins
+                        claimStartIoReward();
+
+
+                    }
+                });
+        }
+
+//        startIoVideoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
+//            @Override
+//            public void onReceiveAd(Ad ad) {
+//                Log.d("startio", "onReceiveAd: start io loaded ad");
+////                startIoVideoAd.showAd();
+//                Toast.makeText(activity, "Start.io Ad is Ready", Toast.LENGTH_SHORT).show();
+//                // send data to server here
+//            }
+//
+//            @Override
+//            public void onFailedToReceiveAd(Ad ad) {
+//                // Can't show Start.io rewarded video Ad.
+//                Log.d("startio", "onReceiveAd: start io Not loaded ad");
+//                Toast.makeText(activity, "Start.io Ad is NOT Ready", Toast.LENGTH_SHORT).show();
+//                //UnityAd
+//
+////                UnityAds.show(getActivity(), unityAdUnitIdReward, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+////                    @Override
+////                    public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+////                        Log.d("UnityAd", "onUnityAdsShowFailure: failed: " + message);
+////                    }
+////
+////                    @Override
+////                    public void onUnityAdsShowStart(String placementId) {
+////                        Log.d("UnityAd", "onUnityAdsShowStart: ");
+////                    }
+////
+////                    @Override
+////                    public void onUnityAdsShowClick(String placementId) {
+////                        Log.d("UnityAd", "onUnityAdsShowClick: ");
+////
+////                    }
+////
+////                    @Override
+////                    public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+////                        Log.d("UnityAd", "onUnityAdsShowComplete: ");
+////                        loadUnityRewardedAd();
+////                        // send data to server here
+////                        // and after that refresh coins
+////                        claimStartIoReward();
+////
+////
+////                    }
+////                });
+//
+//            }
+//        });
+    }
+
+    private void claimStartIoReward() {
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Constants.START_IO_CLAIM, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
+
+                                Log.d("claimStartIoReward", "onResponse: response Sucess: " + response.getString("data"));
+
+//                                if (response.getString("data").equals(response.getString("data"))) {
+//
+//                                }
+                                    Toast.makeText(activity, "Coins added for Play and Earn!", Toast.LENGTH_SHORT).show();
+                                    checkStartIoEligibility();
+                                    updateCoins();
+
+
+//                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new CoinFragment()).commit();
+
+
+                            } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
+                                Log.d("claimStartIoReward", "onResponse: response Failed: " + response.getString("data"));
+
+                            } else {
+                                Log.d("claimStartIoReward", "onResponse: something went wrong");
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("claimStartIoReward", "onResponse: error response: " + error.getMessage());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> header = new HashMap<>();
+                header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
+                return header;
+            }
+        };
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
+    }
+
+    private void claimProedge() {
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Constants.POLLFISH_PROEDGE_CLAIM, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
+
+                                Log.d("claimProedge", "onResponse: response Sucess: " + response.getString("data"));
+
+                                if (response.getString("data").equals(response.getString("data"))) {
+
+                                    Toast.makeText(activity, "Coins added for Pollfish Video Ad", Toast.LENGTH_SHORT).show();
+                                }
+
+
+//                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new CoinFragment()).commit();
+                                checkProedgeEligible();
+
+
+                            } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
+                                Log.d("claimProedge", "onResponse: response Failed: " + response.getString("data"));
+
+                            } else {
+                                Log.d("claimProedge", "onResponse: something went wrong");
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("claimProedge", "onResponse: error response: " + error.getMessage());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> header = new HashMap<>();
+                header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
+                return header;
+            }
+        };
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
+
+    }
+
+    private void checkProedgeEligible() {
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.POLLFISH_PROEDGE_ELIGIBILITY,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
+
+
+                                binding.pollfishVidAd.setVisibility(View.VISIBLE);
+
+                                Log.d("checkProedgeEligible", "onResponse: response Sucess: " + response.getString("data"));
+
+                                JSONObject data = response.getJSONObject("data");
+
+                                boolean dailyCheckIn = data.getBoolean("dayily_limit");     //"dayily_limit" = does user have any attempt available
+
+                                if (dailyCheckIn) {
+                                    binding.pollfishVidAd.setClickable(true);
+                                    if (activity != null && isAdded()) {
+                                        binding.pollfishVidAd.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.button_bg, activity.getTheme()));
+                                        binding.pollfishVidAd.setBackgroundTintList(ColorStateList.valueOf(ResourcesCompat.getColor(activity.getResources(),R.color.orangeDark, activity.getTheme())));
+                                        binding.pollfishVidAd.setTextColor(getResources().getColor(R.color.white, requireActivity().getTheme()));
+                                    }
+                                } else {
+                                    binding.pollfishVidAd.setClickable(false);
+                                    if (activity != null && isAdded()) {
+                                        binding.pollfishVidAd.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.disable_button_bg, activity.getTheme()));
+                                        binding.pollfishVidAd.setBackgroundTintList(ColorStateList.valueOf(ResourcesCompat.getColor(activity.getResources(),R.color.orange_dull_2, activity.getTheme())));
+
+                                        binding.pollfishVidAd.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
+                                    }
+                                }
+
+                            } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
+                                Log.d("checkProedgeEligible", "onResponse: response Failed: " + response.getString("data"));
+
+                            } else {
+                                Log.d("checkProedgeEligible", "onResponse: something went wrong");
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("checkProedgeEligible", "onResponse: error response: " + error.getMessage());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> header = new HashMap<>();
+                header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
+                return header;
+            }
+        };
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
+
+    }
+
+    private void loadProedge() {
+
+//        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+//        AdRequest adRequest = adRequestBuilder
+//                .clickId(ControlRoom.getInstance().getId(activity))
+//                .requestUuid(ControlRoom.getInstance().getId(activity))
+//                .build();
+
+        /*Prodege.loadRewardedAd(POLLFISH_PROEDGE_REWARD_AD_PLAC_ID, new ProdegeRewardedLoadListener() {
+            @Override
+            public void onRewardedLoaded(@NonNull String s, @NonNull ProdegeRewardedInfo prodegeRewardedInfo) {
+                Log.d("ProedgeAds", "onRewardedLoaded: coins: " + prodegeRewardedInfo.getPoints());
+            }
+
+            @Override
+            public void onRewardedLoadFailed(@NonNull String s, @NonNull ProdegeException e) {
+                Log.d("ProedgeAds", "onRewardedLoadFailed: " + e.getMessage());
+
+            }
+        }, adRequest);*/
     }
 
     private void loadUnityRewardedAd() {
@@ -670,7 +1216,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
     }
 
     private void loadRewardedAd() {
-        myRewardedAd = MaxRewardedAd.getInstance(appLovinAdUnitIdReward, getActivity());
+        myRewardedAd = MaxRewardedAd.getInstance(appLovinAdUnitIdReward, activity);
         myRewardedAd.setListener(new MaxRewardedAdListener() {
             @Override
             public void onUserRewarded(MaxAd maxAd, MaxReward maxReward) {
@@ -712,7 +1258,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
             @Override
             public void onAdLoadFailed(String s, MaxError maxError) {
-                Toast.makeText(getContext(), "Ad loaded Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Ad loaded Failed", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -753,10 +1299,21 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
 
                                 }
-                                binding.buyCoinRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                                binding.buyCoinRv.setAdapter(new BuyCoinAdapter(buyCoinList, getContext()));
-                                binding.buyCoinRv.hideShimmerAdapter();
-                                binding.buyCoinRv.setNestedScrollingEnabled(false);
+
+//                        checking buyCoin list empty.
+                                if (buyCoinList.size() == 0) {
+                                    binding.buyCoinRv.setVisibility(View.GONE);
+                                    binding.emptyTxtBuyCoin.setVisibility(View.VISIBLE);
+                                } else {
+                                    binding.buyCoinRv.setVisibility(View.VISIBLE);
+                                    binding.emptyTxtBuyCoin.setVisibility(View.GONE);
+
+
+                                    binding.buyCoinRv.setLayoutManager(new LinearLayoutManager(activity));
+                                    binding.buyCoinRv.setAdapter(new BuyCoinAdapter(buyCoinList, activity));
+                                    binding.buyCoinRv.hideShimmerAdapter();
+                                    binding.buyCoinRv.setNestedScrollingEnabled(false);
+                                }
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
@@ -780,11 +1337,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
     }
 
     private void loadInterstitialAd() {
@@ -826,7 +1383,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                     @Override
                     public void run() {
                         myInterstitialAd.loadAd();
-                        Log.d("AppLovin", "run: loadAd App Lovin: retry attempt: "+ retryAttempt);
+                        Log.d("AppLovin", "run: loadAd App Lovin: retry attempt: " + retryAttempt);
                     }
                 }, delayMillis);
             }
@@ -859,8 +1416,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                                 binding.coinFragConstrLayout.setVisibility(View.VISIBLE);
                                 Log.d("sendWatchVidDetailToServer", "onResponse: response Sucess: " + response.getString("data"));
 
-                                Toast.makeText(getContext(), "" + response.getString("data"), Toast.LENGTH_SHORT).show();
-                                refreshFragment();
+                                Toast.makeText(activity, "" + response.getString("data"), Toast.LENGTH_SHORT).show();
+                                getWatchVideoList();
+                                updateCoins();
+
+
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
@@ -884,11 +1444,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
 
     }
@@ -926,24 +1486,28 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                                     watchVideoList.add(modal);
 
                                 }
-                                binding.watchVideioRv.setAdapter(new WatchVidAdapter(watchVideoList, getContext(), new ButtonClickListener() {
-                                    @Override
-                                    public void onButtonClick(int vidId) {
-                                        videoId = vidId;
-                                        if (myRewardedAd.isReady()) {
-                                            myRewardedAd.showAd();
-                                        } else if (UnityAds.isInitialized()) {
 
-                                            UnityAds.show(getActivity(), unityAdUnitIdReward, new UnityAdsShowOptions(),
-                                                    CoinFragment.this);
-                                        } else {
-                                            Toast.makeText(activity, "No Ads Available", Toast.LENGTH_SHORT).show();
+                                if (watchVideoList.size() != 0) {
+                                    binding.watchVideioRv.setAdapter(new WatchVidAdapter(watchVideoList, activity, new ButtonClickListener() {
+                                        @Override
+                                        public void onButtonClick(int vidId) {
+                                            videoId = vidId;
+                                            if (myRewardedAd.isReady()) {
+                                                myRewardedAd.showAd();
+                                            } else if (UnityAds.isInitialized()) {
+
+                                                UnityAds.show(getActivity(), unityAdUnitIdReward, new UnityAdsShowOptions(),
+                                                        CoinFragment.this);
+                                            } else {
+                                                Toast.makeText(activity, "No Ads Available", Toast.LENGTH_SHORT).show();
+                                            }
+
                                         }
+                                    }));
+                                    binding.watchVideioRv.setLayoutManager(new LinearLayoutManager(activity));
+                                    binding.watchVideioRv.setNestedScrollingEnabled(false);
+                                }
 
-                                    }
-                                }));
-                                binding.watchVideioRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                                binding.watchVideioRv.setNestedScrollingEnabled(false);
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
                                 Log.d("getWatchVideoList", "onResponse: response Failed: " + response.getString("data"));
@@ -966,11 +1530,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
     }
 
@@ -986,21 +1550,12 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
 
                                 Log.d("claimDailyCheckin", "onResponse: response Sucess: " + response.getString("data"));
 
-                                Toast.makeText(getContext(), "" + response.getString("data"), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, "" + response.getString("data"), Toast.LENGTH_SHORT).show();
                                 dailyCheckInDialog.dismiss();
+                                updateCoins();
 
-                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new CoinFragment()).commit();
-//                                getActivity().getSupportFragmentManager().beginTransaction().attach(getParentFragment());
-//                                startActivity(getActivity().getIntent());
-
-                                /*FragmentTransaction transaction = getActivity().getSupportFragmentManager()
-                                        .beginTransaction();
-                                if (Build.VERSION.SDK_INT >= 26) {
-                                    transaction.setReorderingAllowed(false);
-                                }
-                                transaction.detach(CoinFragment.this).attach
-                                        (CoinFragment.this).commit();*/
-
+//                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new CoinFragment()).commit();
+                                    getDailyCheckInDataEligibilityFrag();
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
                                 Log.d("claimDailyCheckin", "onResponse: response Failed: " + response.getString("data"));
@@ -1023,15 +1578,15 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
     }
 
-    private void getDailyCheckInDataFrag() {
+    private void getDailyCheckInDataEligibilityFrag() {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.DAILY_CHECK_IN_GET_API, null,
                 new Response.Listener<JSONObject>() {
@@ -1040,10 +1595,8 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                         try {
                             if (response.getBoolean("status") && response.getInt("code") == 200) {
 
-//                                binding.frameLayout.setVisibility(View.GONE);
-//                                binding.swipeRefreshBidHis.setRefreshing(false);
 
-                                Log.d("getDailyCheckInDataFrag", "onResponse: response Sucess: " + response.getString("data"));
+                                Log.d("getDailyCheckInDataEligibilityFrag", "onResponse: response Sucess: " + response.getString("data"));
 
                                 JSONObject data = response.getJSONObject("data");
 
@@ -1055,24 +1608,20 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                                         binding.dailyCheckInBtn.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.button_bg, activity.getTheme()));
                                         binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.white, requireActivity().getTheme()));
                                     }
-//                                    binding.dailyCheckInBtn.setBackground(getResources().getDrawable(R.drawable.button_bg, getActivity().getTheme()));
-//                                    binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.white, requireActivity().getTheme()));
                                 } else {
                                     binding.dailyCheckInBtn.setClickable(false);
                                     if (activity != null && isAdded()) {
                                         binding.dailyCheckInBtn.setBackground(ResourcesCompat.getDrawable(activity.getResources(), R.drawable.disable_button_bg, activity.getTheme()));
                                         binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
                                     }
-//                                    binding.dailyCheckInBtn.setBackground(getResources().getDrawable(R.drawable.disable_button_bg, getActivity().getTheme()));
-//                                    binding.dailyCheckInBtn.setTextColor(getResources().getColor(R.color.whiteOnly, requireActivity().getTheme()));
                                 }
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
-                                Log.d("getDailyCheckInDataFrag", "onResponse: response Failed: " + response.getString("data"));
+                                Log.d("getDailyCheckInDataEligibilityFrag", "onResponse: response Failed: " + response.getString("data"));
 
                             } else {
-                                Log.d("getDailyCheckInDataFrag", "onResponse: something went wrong");
+                                Log.d("getDailyCheckInDataEligibilityFrag", "onResponse: something went wrong");
 
                             }
                         } catch (JSONException e) {
@@ -1082,22 +1631,22 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("getDailyCheckInDataFrag", "onResponse: error response: " + error.getMessage());
+                Log.d("getDailyCheckInDataEligibilityFrag", "onResponse: error response: " + error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
     }
 
-    private void getSpinnerDataFrag() {
+    public void getSpinnerDataFrag() {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.SPINNER_DATA_API, null,
                 new Response.Listener<JSONObject>() {
@@ -1157,11 +1706,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
     }
 
     private void getScratchDetailsFromServerFrag() {
@@ -1224,11 +1773,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
     }
 
     @Override
@@ -1236,19 +1785,12 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         super.onResume();
         TheoremReach.getInstance().onResume(getActivity());
 
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
         TheoremReach.getInstance().onPause();
-    }
-
-    private void refreshFragment() {
-        requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new CoinFragment()).commit();
-
-        binding.swipeRefreshCoinFrag.setRefreshing(false);
     }
 
     public void updateCoins() {
@@ -1260,13 +1802,15 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
                         Log.d("updateCoins", "onResponse: Sucessfull...:" + response.getString("data"));
                         COINS = response.getJSONObject("data").getInt("points");
                         DIAMONDS = response.getJSONObject("data").getInt("daimond");
-                        ControlRoom.getInstance().setCoins(response.getJSONObject("data").getInt("points") + "");
-                        ControlRoom.getInstance().setDiamonds(DIAMONDS + "");
+                        ControlRoom.getInstance().setCoins(response.getJSONObject("data").getInt("points") + "", activity);
+                        ControlRoom.getInstance().setDiamonds(DIAMONDS + "",activity);
+
+                        JSONObject data = response.getJSONObject("data");
+                        uID = data.getString("id");
+
 
                         binding.coinTxt.setText(COINS + "");
                         binding.diamondTv.setText(DIAMONDS + "");
-                        System.out.println("Coins from ControlRoom: " + ControlRoom.getInstance().getCoins());
-                        System.out.println("dIAMONDS from ControlRoom: " + ControlRoom.getInstance().getDiamonds() + "DIAMONDS: " + DIAMONDS);
                     } else
                         Log.d("updateCoins", "onResponse: Failed..." + response.getString("data"));
                 } catch (JSONException e) {
@@ -1284,11 +1828,11 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(activity));
                 return header;
             }
         };
-        Volley.newRequestQueue(binding.getRoot().getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(jsonObjectRequest);
     }
 
     @Override
@@ -1319,5 +1863,7 @@ public class CoinFragment extends Fragment implements IUnityAdsShowListener {
         super.onDestroyView();
         cpxResearch.deactivateAutomaticCheckForSurveys();
         cpxResearch.setSurveyVisibleIfAvailable(false, getActivity());
+        // pubscale destroy..
+        OfferWall.destroy();
     }
 }

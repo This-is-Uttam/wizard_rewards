@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 
 public class TrendingDetailAdapter extends RecyclerView.Adapter<TrendingDetailAdapter.Viewholder> {
@@ -27,7 +28,7 @@ public class TrendingDetailAdapter extends RecyclerView.Adapter<TrendingDetailAd
         this.trendItemList = trendItemList;
         this.context = context;
 
-
+        Collections.reverse(this.trendItemList);
     }
 
     @NonNull
@@ -58,7 +59,8 @@ public class TrendingDetailAdapter extends RecyclerView.Adapter<TrendingDetailAd
         holder.binding.daysLeftText.setText("Likely to close in " +daysLeft+ " days");
         holder.binding.spotLeftText.setText(trendingModal.getSpotLeftText());
         holder.binding.trendItemName.setText(trendingModal.getTrendItemName());
-        holder.binding.trendItemPrice.setText(trendingModal.getPricePerSpot()+"/spot");
+        int spotPrice = (int) Float.parseFloat(trendingModal.getPricePerSpot());
+        holder.binding.trendItemPrice.setText(spotPrice+"/spot");
         String image = Constants.PRODUCT_IMG_URL+ trendingModal.getTrendItemImg();
         Picasso.get()
                 .load(image)

@@ -62,6 +62,7 @@ public class BuyCoinAdapter extends RecyclerView.Adapter<BuyCoinAdapter.Viewhold
                 Intent intent = new Intent(context, UpiAppsActivity.class);
                 intent.putExtra("COINS", coins);
                 intent.putExtra("PRICE", modal.getBuyCoinPrice());
+                intent.putExtra("BUY_COIN_ID", modal.getId());
 
                 context.startActivity(intent);
             }

@@ -8,9 +8,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/myInfoLayou"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -66,20 +68,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:hint="Enter Full Name"
-
                 app:boxCornerRadiusBottomEnd="18dp"
                 app:boxCornerRadiusBottomStart="18dp"
                 app:boxCornerRadiusTopEnd="18dp"
+
                 app:boxCornerRadiusTopStart="18dp"
                 app:boxStrokeColor="@color/primaryVariantColor"
-                app:boxStrokeWidthFocused="1dp"
 
+                app:boxStrokeWidthFocused="1dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="30"
-
                 app:endIconMode="clear_text"
                 app:endIconTint="@color/primaryVariantColor"
                 app:hintTextColor="@color/primaryVariantColor"
@@ -216,7 +218,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_bg"
                 android:clickable="false"
                 android:elevation="4dp"
@@ -230,7 +231,6 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/nameInputLayout"
                 app:layout_constraintStart_toStartOf="@+id/nameInputLayout"
                 app:layout_constraintTop_toBottomOf="@+id/addInputLayout" />
@@ -238,14 +238,14 @@
             <ProgressBar
                 android:id="@+id/myInfoProgress"
                 style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:visibility="gone"
+                android:indeterminateTint="@color/TertiaryColor"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/myInfoToolbar" />
+                app:layout_constraintEnd_toEndOf="@+id/submitButton"
+                app:layout_constraintStart_toStartOf="@+id/submitButton"
+                app:layout_constraintTop_toBottomOf="@+id/submitButton" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 import com.wizard.rewards720.databinding.ActivityRedeemViewBinding;
 
 import org.json.JSONArray;
@@ -163,14 +164,14 @@ public class RedeemViewActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("getAllVouchers", "onResponse: error ResPonse:  " + error.getMessage());
+                Log.d("postRedeemRequest", "onResponse: error ResPonse:  " + error.getMessage());
             }
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(RedeemViewActivity.this));
                 return header;
             }
         };
@@ -209,6 +210,14 @@ public class RedeemViewActivity extends AppCompatActivity {
                             binding.voucherCoins2.setText(voucherCoins);
                             binding.voucherAmt2.setText(voucherSymbol + voucherAmt);
                             binding.nameInputLayout.setHint(voucherHint);
+
+                            String vouImg = Constants.REDEEM_IMG_URL + voucherImg;
+                            Log.d("voucherimg", "onResponse: voucher: "+ vouImg);
+
+                            Picasso.get()
+                                    .load(vouImg)
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(binding.voucherImg2);
 
 //                          Input type
                             if (voucherInputType.equals(Constants.INPUT_TYPE_TEXT)) {
@@ -254,7 +263,7 @@ public class RedeemViewActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(RedeemViewActivity.this));
                 return header;
             }
         };

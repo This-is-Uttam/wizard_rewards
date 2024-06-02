@@ -2,9 +2,12 @@ package com.wizard.rewards720.Fragments;
 
 import static com.wizard.rewards720.Constants.AUTHORISATION;
 import static com.wizard.rewards720.Constants.BEARER;
+import static com.wizard.rewards720.Constants.COINS;
 import static com.wizard.rewards720.Constants.CONTENT_TYPE;
 import static com.wizard.rewards720.Constants.CONTENT_TYPE_VALUE;
+import static com.wizard.rewards720.Constants.DIAMONDS;
 import static com.wizard.rewards720.Constants.REDEEM_URL;
+import static com.wizard.rewards720.Constants.USER_API_URL;
 import static com.wizard.rewards720.LoginActivity.accessToken;
 
 import android.os.Bundle;
@@ -66,7 +69,7 @@ public class GiftFragment extends Fragment {
         binding.progressBar3.setVisibility(View.VISIBLE);
         binding.errorImg.setVisibility(View.GONE);
         binding.message.setVisibility(View.GONE);
-        binding.coins.setText(ControlRoom.getInstance().getCoins());
+        binding.coins.setText(ControlRoom.getInstance().getCoins(requireContext()));
 
 
         getAllRedeems();
@@ -75,13 +78,15 @@ public class GiftFragment extends Fragment {
             @Override
             public void onRefresh() {
                 getAllRedeems();
-
+                ControlRoom.getInstance().updateCoins(requireContext());
+                binding.coins.setText(ControlRoom.getInstance().getCoins(requireContext()));
             }
         });
 
 
         return binding.getRoot();
     }
+
 
     private void getAllRedeems() {
         redeemList = new ArrayList<>();
@@ -181,10 +186,10 @@ public class GiftFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+        Volley.newRequestQueue(requireActivity()).add(jsonObjectRequest);
     }
 }

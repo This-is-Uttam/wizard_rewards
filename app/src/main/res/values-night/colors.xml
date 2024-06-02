@@ -31,6 +31,8 @@
     <color name="orangeDark">#FFC107</color>
     <color name="orangeDark2">#DFA700</color>
     <color name="orange_dull">#AF7B00</color>
+    <color name="orange_dull_2">#F8DB95</color>
+
     <color name="blue">#81D4FA</color>
     <color name="dark_blue">#2196F3</color>
     <color name="ripple_color">#2C2196F3</color>
@@ -47,5 +49,6 @@
     <color name="buttonDisableColor">#B2DFDB</color>
     <color name="winnerGreen">#00C853</color>
     <color name="bid_his_item_color">#373737</color>
+    <color name="nav_item_unselected">#99C3C3C3</color>
 
 </resources>

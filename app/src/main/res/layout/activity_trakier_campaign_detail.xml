@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".TrakierCampaignDetailActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/campaignDetailProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_weight="1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/campaignDetailLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/posterImg"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/adPosterImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/banner3" />
+            </androidx.cardview.widget.CardView>
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/adIcon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pubscale"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/posterImg"
+                app:shapeAppearanceOverlay="@style/roundCornerImageview" />
+
+            <TextView
+                android:id="@+id/adTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:minLines="2"
+                android:paddingTop="4dp"
+                android:singleLine="false"
+                android:text="Advertisement Title"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/adRewardCoin"
+                app:layout_constraintStart_toEndOf="@+id/adIcon"
+                app:layout_constraintTop_toTopOf="@+id/adIcon" />
+
+            <TextView
+                android:id="@+id/adRewardCoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:drawableStart="@drawable/coins_18dp"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="78"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/adTitle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/adClaimBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Claim Now"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="#292727"
+                android:textStyle="normal"
+                app:backgroundTint="@color/orangeDark"
+                app:cornerRadius="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/adDesc" />
+
+            <TextView
+                android:id="@+id/adDesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat"
+                android:singleLine="false"
+                android:text="Did you know that the Earth is approximately 4.5 billion years old? This ancient planet has witnessed countless events throughout its history."
+                android:textSize="12sp"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/adIcon"
+                app:layout_constraintTop_toBottomOf="@+id/adTitle" />
+
+            <TextView
+                android:id="@+id/termsNcondition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat"
+                android:singleLine="false"
+                android:text="Did you know that the Earth is approximately 4.5 billion years old? This ancient planet has witnessed countless events throughout its history."
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/adIcon"
+                app:layout_constraintTop_toBottomOf="@+id/textView79" />
+
+            <TextView
+                android:id="@+id/textView75"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Task(s) Completed:"
+                app:layout_constraintStart_toStartOf="@+id/adDesc"
+                app:layout_constraintTop_toBottomOf="@+id/adClaimBtn" />
+
+            <TextView
+                android:id="@+id/textView76"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coins Earned:"
+                app:layout_constraintStart_toStartOf="@+id/adDesc"
+                app:layout_constraintTop_toBottomOf="@+id/textView75" />
+
+            <TextView
+                android:id="@+id/textView77"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:drawableLeft="@drawable/coins_14dp"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="12"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/textView76"
+                app:layout_constraintStart_toEndOf="@+id/textView76"
+                app:layout_constraintTop_toTopOf="@+id/textView76" />
+
+            <TextView
+                android:id="@+id/tasksCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="0/11"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/textView75"
+                app:layout_constraintStart_toEndOf="@+id/textView75"
+                app:layout_constraintTop_toTopOf="@+id/textView75" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/linearProgressIndicator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:indeterminate="false"
+                android:progress="50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView77"
+                app:trackCornerRadius="16dp" />
+
+            <TextView
+                android:id="@+id/textView79"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Terms &amp; Conditions"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintEnd_toEndOf="@+id/linearProgressIndicator"
+                app:layout_constraintStart_toStartOf="@+id/linearProgressIndicator"
+                app:layout_constraintTop_toBottomOf="@+id/linearProgressIndicator" />
+
+            <TextView
+                android:id="@+id/textView78"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Task Details"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintEnd_toEndOf="@+id/linearProgressIndicator"
+                app:layout_constraintStart_toStartOf="@+id/linearProgressIndicator"
+                app:layout_constraintTop_toBottomOf="@+id/termsNcondition" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:descendantFocusability="blocksDescendants"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView78">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/trakierTaskRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingBottom="56dp"
+                    tools:listitem="@layout/trakier_task_item" />
+
+            </RelativeLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/emptyCampaignDetailTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:text="Something went wrong!"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

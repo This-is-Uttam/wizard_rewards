@@ -26,7 +26,8 @@
             android:id="@+id/winnerCLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true">
+            android:clickable="true"
+            android:paddingBottom="8dp">
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -104,6 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Winner Name : "
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/imageView4"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
@@ -111,8 +113,8 @@
                 android:id="@+id/textView65"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="Winning Prize : "
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/textView63"
                 app:layout_constraintTop_toBottomOf="@+id/textView63" />
 
@@ -120,20 +122,32 @@
                 android:id="@+id/textView66"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:text="Prize Value : "
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/textView65"
                 app:layout_constraintTop_toBottomOf="@+id/textView65" />
 
             <TextView
-                android:id="@+id/prodWinnerName"
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:text="Winning Month :"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView65"
+                app:layout_constraintTop_toBottomOf="@+id/textView66" />
+
+            <TextView
+                android:id="@+id/prodWinnerName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/montserrat_bold"
+                android:includeFontPadding="false"
                 android:text="Gourav Kumar"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView63"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/prodWinningPrice"
                 app:layout_constraintTop_toTopOf="@+id/textView63" />
 
@@ -141,11 +155,13 @@
                 android:id="@+id/prodWinningPrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/montserrat_bold"
+                android:includeFontPadding="false"
                 android:singleLine="true"
                 android:text="MI Smart Watch "
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView65"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView65"
@@ -156,11 +172,26 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_bold"
+                android:includeFontPadding="false"
                 android:text="₹2999"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView66"
                 app:layout_constraintEnd_toEndOf="@+id/prodWinningPrice"
                 app:layout_constraintStart_toStartOf="@+id/prodWinningPrice"
                 app:layout_constraintTop_toTopOf="@+id/textView66" />
+
+            <TextView
+                android:id="@+id/winMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
+                android:includeFontPadding="false"
+                android:text="January"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView4"
+                app:layout_constraintEnd_toEndOf="@+id/prodWinningPrice"
+                app:layout_constraintStart_toStartOf="@+id/prodWinningPrice"
+                app:layout_constraintTop_toTopOf="@+id/textView4" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

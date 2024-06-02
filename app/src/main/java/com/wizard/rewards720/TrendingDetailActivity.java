@@ -56,24 +56,6 @@ public class TrendingDetailActivity extends AppCompatActivity {
         trendingItemList = new ArrayList<>();
         getAllProducts();
 
-        /*trendingItemList.add(new TrendingModal("Likely to close in "+"10"+" days",
-                "15", "boAt Speaker"," ₹3999/spot",R.drawable.boat_speaker));
-
-        trendingItemList.add(new TrendingModal("Likely to close in 6 days",
-                "42", "HP Pavilion Silver White"," ₹42000/spot",R.drawable.hp_pavilion));
-
-        trendingItemList.add(new TrendingModal("Likely to close in 5 days",
-                "92", "Mi Smart Watch"," ₹2999/spot",R.drawable.mi_watch));
-
-        trendingItemList.add(new TrendingModal("Likely to close in "+"9" +" days",
-                "80", "Phillips Trimmer"," ₹499/spot",R.drawable.trimmer_phillips));
-
-        trendingItemList.add(new TrendingModal("Likely to close in 1 days",
-                "20", "Alien Earpods blue"," ₹2999/spot",R.drawable.earpods));*/
-
-        /*binding.trendingDetailRv.setAdapter(new TrendingDetailAdapter(trendingItemList,this));
-        binding.trendingDetailRv.setLayoutManager(new LinearLayoutManager(this));
-        binding.trendingDetailRv.setNestedScrollingEnabled(false);*/
 
 
     }
@@ -154,7 +136,7 @@ public class TrendingDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(TrendingDetailActivity.this));
                 return header;
             }
         };

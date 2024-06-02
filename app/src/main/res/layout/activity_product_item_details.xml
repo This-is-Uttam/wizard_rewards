@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -123,9 +124,11 @@
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/constraintLayout9"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout9" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
 
                     <TextView
                         android:id="@+id/textView26"
@@ -148,7 +151,9 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
                         android:inputType="textMultiLine"
+                        android:paddingBottom="16dp"
                         android:text="@string/long_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView26" />
@@ -346,9 +351,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Something went wrong"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/errorImg"
                     app:layout_constraintStart_toStartOf="@+id/errorImg"
-                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
 
                 <ProgressBar
                     android:id="@+id/progressBar3"
@@ -356,9 +363,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:indeterminateTint="@color/TertiaryColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/errorImg"
                     app:layout_constraintStart_toStartOf="@+id/errorImg"
-                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

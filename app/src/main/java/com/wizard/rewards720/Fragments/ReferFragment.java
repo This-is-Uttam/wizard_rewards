@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -35,8 +36,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.datatransport.BuildConfig;
 import com.wizard.rewards720.Adapters.LeaderBoardAdapter;
-import com.wizard.rewards720.BuildConfig;
 import com.wizard.rewards720.Constants;
 import com.wizard.rewards720.ControlRoom;
 import com.wizard.rewards720.LeaderboardDetailActivity;
@@ -60,12 +61,15 @@ public class ReferFragment extends Fragment {
     Context context;
     String referCode;
 
+    public ReferFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentReferBinding.inflate( inflater, container, false);
-        context= container.getContext();
+        binding = FragmentReferBinding.inflate(inflater, container, false);
+        context = requireActivity();
 
 //        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.blue,getContext().getTheme()));
 
@@ -73,25 +77,12 @@ public class ReferFragment extends Fragment {
 //        binding.notificationToolbar.setTitleTextColor(getResources().getColor(R.color.black, getContext().getTheme()));
 //        getUserData();
 
-        referCode = ControlRoom.getInstance().getReferCode();
+        referCode = ControlRoom.getInstance().getReferCode(requireContext());
         binding.referCode.setText(referCode);
 
         getLeaderBoardWinners();
 
 
-        SpannableString referEarnIntro = SpannableString.valueOf(binding.referEarnIntro.getText().toString());
-        referEarnIntro.setSpan(new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View view) {
-                startActivity(new Intent(getContext(), LeaderboardDetailActivity.class));
-            }
-        },100,112, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        referEarnIntro.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TertiaryColor, getContext()
-                .getTheme())),100,112, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        referEarnIntro.setSpan(new StyleSpan(Typeface.BOLD),100,112,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        binding.referEarnIntro.setText(referEarnIntro);
-        binding.referEarnIntro.setMovementMethod(LinkMovementMethod.getInstance());
 
 //        refer text click event
         binding.referBtn.setOnClickListener(new View.OnClickListener() {
@@ -99,8 +90,8 @@ public class ReferFragment extends Fragment {
             public void onClick(View view) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.refer_earn_txt)+"https://play.google.com/store/apps/details?id=" +BuildConfig.APPLICATION_ID +"\n\nReferral Code: *"+  referCode+"*");
-                startActivity(Intent.createChooser(shareIntent,"Share to your friends"));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.refer_earn_txt) + "https://play.google.com/store/apps/details?id=" + context.getPackageName() + "\n\nReferral Code: *" + referCode + "*");
+                startActivity(Intent.createChooser(shareIntent, "Share to your friends"));
             }
         });
 
@@ -108,7 +99,7 @@ public class ReferFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("Refer Code",binding.referCode.getText().toString());
+                ClipData clipData = ClipData.newPlainText("Refer Code", binding.referCode.getText().toString());
                 clipboardManager.setPrimaryClip(clipData);
                 Toast.makeText(context, "Refer Code Copied..", Toast.LENGTH_SHORT).show();
             }
@@ -126,24 +117,27 @@ public class ReferFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            if (response.getBoolean("status") && response.getInt("code") == 200){
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
                                 binding.leaderboardProgress.setVisibility(View.GONE);
 
-                                Log.d("getLeaderBoardWinners", "onResponse: response Sucessfull: "+ response.getString("data"));
+                                Log.d("getLeaderBoardWinners", "onResponse: response Sucessfull: " + response.getString("data"));
 
-                                JSONArray jsonArray = response.getJSONArray("data");
+                                JSONObject responseData = response.getJSONObject("data");
 
-                                for (int i = 0; i<jsonArray.length(); i++){
-                                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                                    String name  = jsonObject.getString("name");
+
+                                JSONArray leaderboardList = responseData.getJSONArray("leaderBoard");
+
+                                for (int i = 0; i < leaderboardList.length(); i++) {
+                                    JSONObject jsonObject = (JSONObject) leaderboardList.get(i);
+                                    String name = jsonObject.getString("name");
                                     String image = jsonObject.getString("image");
                                     int totalRefer = jsonObject.getInt("m_valid_refer");    // monthly_valid_refer_count
-                                    boolean showCrown =false;
-                                    if (i<5){
-                                        showCrown=true;
+                                    boolean showCrown = false;
+                                    if (i < 5) {
+                                        showCrown = true;
                                     }
 
-                                    LeaderBoardModal leaderBoardModal = new LeaderBoardModal(showCrown,i+1,name,image,totalRefer);
+                                    LeaderBoardModal leaderBoardModal = new LeaderBoardModal(showCrown, i + 1, name, image, totalRefer);
                                     leaderBoardList.add(leaderBoardModal);
                                 }
 
@@ -155,15 +149,53 @@ public class ReferFragment extends Fragment {
                                     binding.leaderBoardRv.setVisibility(View.VISIBLE);
                                     binding.emptyTxtLeaderboard.setVisibility(View.GONE);
 
-                                    binding.leaderBoardRv.setAdapter(new LeaderBoardAdapter(leaderBoardList,getContext()));
+                                    binding.leaderBoardRv.setAdapter(new LeaderBoardAdapter(leaderBoardList, getContext()));
                                     binding.leaderBoardRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                                    binding.leaderBoardRv.setNestedScrollingEnabled(false);
+//                                    binding.leaderBoardRv.setNestedScrollingEnabled(false);
+                                }
+
+                                JSONArray referDataArray = responseData.getJSONArray("refer_data");
+                                if (referDataArray.length() != 0) {
+                                    JSONObject referDataObj = (JSONObject) referDataArray.get(0);
+                                    if (referDataObj != null) {
+                                        String invites = referDataObj.getString("invites");
+                                        String referCoins = referDataObj.getString("points");
+                                        if (!referCoins.equals(""))
+                                            binding.referHeading.setText("Refer a friend and earn " + referCoins + " coins.");
+                                        if (!invites.equals("")){
+                                            binding.referEarnIntro.setText(Html.fromHtml("<b>Exciting Price</b> will be rewarded to the referrers who have completed "+invites +" or more referrals. Click on <b> Full Details </b> for Leaderboard details."));
+
+                                            // Spannable text
+
+                                            SpannableString referEarnIntro = SpannableString.valueOf(binding.referEarnIntro.getText().toString());
+                                            referEarnIntro.setSpan(new ClickableSpan() {
+                                                @Override
+                                                public void onClick(@NonNull View view) {
+                                                    startActivity(new Intent(requireContext(), LeaderboardDetailActivity.class));
+                                                }
+                                            }, 99, 112, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                                            if (isAdded()) {
+                                                referEarnIntro.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TertiaryColor, getActivity().getApplicationContext()
+                                                        .getTheme())), 99, 112, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                referEarnIntro.setSpan(new StyleSpan(Typeface.BOLD), 99, 112, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                binding.referEarnIntro.setText(referEarnIntro);
+                                                binding.referEarnIntro.setMovementMethod(LinkMovementMethod.getInstance());
+                                            }
+                                        }
+
+                                    }else {
+                                        Toast.makeText(context, "No Referral Data Found", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                } else {
+                                    Toast.makeText(context, "No Referral Offers", Toast.LENGTH_SHORT).show();
                                 }
 
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
-                                Log.d("getLeaderBoardWinners", "onResponse: response Failed: "+ response.getString("data"));
-                            }else {
+                                Log.d("getLeaderBoardWinners", "onResponse: response Failed: " + response.getString("data"));
+                            } else {
                                 Log.d("getLeaderBoardWinners", "onResponse: Something went wrong ");
                             }
                         } catch (JSONException e) {
@@ -174,19 +206,18 @@ public class ReferFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("getLeaderBoardWinners", "onResponse: error response: "+error.getMessage());
+                Log.d("getLeaderBoardWinners", "onResponse: error response: " + error.getMessage());
             }
-        }){
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };
         Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
-
 
 
     }

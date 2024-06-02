@@ -110,6 +110,7 @@ public class ScratchWinActivity extends AppCompatActivity {
                         @Override
                         public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
                             Log.d("UnityAd", "onUnityAdsShowComplete: Scratch Activity");
+                            sendScratchCoinsToServer();
                         }
                     });
                 }
@@ -261,7 +262,7 @@ public class ScratchWinActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(ScratchWinActivity.this));
                 return header;
             }
         };
@@ -348,7 +349,7 @@ public class ScratchWinActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(ScratchWinActivity.this));
                 return header;
             }
         };

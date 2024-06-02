@@ -220,7 +220,7 @@ public class RedeemHistoryActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(RedeemHistoryActivity.this));
                 return header;
             }
         };

@@ -42,6 +42,7 @@ public class VoucherAllWinnersAdapter extends RecyclerView.Adapter<VoucherAllWin
         holder.binding.prodWinnerName.setText(modal.getUserName());
         holder.binding.prodWinningPrice.setText(modal.getVoucherName());
         holder.binding.prodWinPriceValue.setText("₹"+modal.getMrp());
+        holder.binding.winMonth.setText(modal.getWinnMonth());
 
         String prodImg = Constants.VOUCHER_IMG_URL + modal.getVoucherImage();
         Picasso.get()
@@ -69,6 +70,7 @@ public class VoucherAllWinnersAdapter extends RecyclerView.Adapter<VoucherAllWin
             return 1;
         else
             return voucherWinList.size();
+//            return 10;
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {

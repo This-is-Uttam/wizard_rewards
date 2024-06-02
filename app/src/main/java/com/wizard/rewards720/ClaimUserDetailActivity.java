@@ -75,7 +75,7 @@ public class ClaimUserDetailActivity extends AppCompatActivity {
                         if (!pincode.matches("[0-9]{6}")){
                             binding.pinCodeInputLayout.setError("Please enter valid pin code.");
                         }else {
-                            String winnerAddress = ControlRoom.getInstance().getFullName()+"\n"+fullAdd + "\n"+ phone+ "\n"+ pincode;
+                            String winnerAddress = ControlRoom.getInstance().getFullName(ClaimUserDetailActivity.this)+"\n"+fullAdd + "\n"+ phone+ "\n"+ pincode;
                             submitClaimDetails(winnerAddress);
                             binding.claimUDetailProgress.setVisibility(View.VISIBLE);
                         }
@@ -137,7 +137,7 @@ public class ClaimUserDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER + accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER + ControlRoom.getInstance().getAccessToken(ClaimUserDetailActivity.this));
                 return header;
             }
 

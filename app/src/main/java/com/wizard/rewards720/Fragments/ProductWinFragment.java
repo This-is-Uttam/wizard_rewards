@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.wizard.rewards720.Adapters.ProductAllWinnersAdapter;
+import com.wizard.rewards720.ControlRoom;
 import com.wizard.rewards720.Modals.ProductWinModal;
 import com.wizard.rewards720.R;
 import com.wizard.rewards720.databinding.FragmentProductWinBinding;
@@ -44,6 +45,10 @@ public class ProductWinFragment extends Fragment {
     FragmentProductWinBinding binding;
     ArrayList<ProductWinModal> productWinnerList;
     ValueAnimator valueAnimator;
+
+    public ProductWinFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,18 +99,69 @@ public class ProductWinFragment extends Fragment {
                             );
                             productWinModal.setProductWinnerCount(i+1);
 
+                            // Winning monnth
+                            int monthNum = jsonObject.getInt("winning_month");
+                            String month = "";
+
+                            switch (monthNum){
+                                case 1:
+                                    month = "January";
+                                    break;
+                                case 2:
+                                    month = "February";
+                                    break;
+                                case 3:
+                                    month = "March";
+                                    break;
+                                case 4:
+                                    month = "April";
+                                    break;
+                                case 5:
+                                    month = "May";
+                                    break;
+                                case 6:
+                                    month = "June";
+                                    break;
+                                case 7:
+                                    month = "July";
+                                    break;
+                                case 8:
+                                    month = "August";
+                                    break;
+                                case 9:
+                                    month = "September";
+                                    break;
+                                case 10:
+                                    month = "October";
+                                    break;
+                                case 11:
+                                    month = "November";
+                                    break;
+                                case 12:
+                                    month = "December";
+                                    break;
+
+                            }
+                            productWinModal.setWinMonth(month);
+
                             productWinnerList.add(productWinModal);
 
                         }
-
                         startValueAnimation(productWinnerList.size());
 
-//                        reverse list to descending order
-                        Collections.reverse(productWinnerList);
+                        // Empty List Handle
 
-                        binding.winnersListRv.setAdapter(new ProductAllWinnersAdapter(productWinnerList,getContext(), true));
-                        binding.winnersListRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                        binding.winnersListRv.setNestedScrollingEnabled(false);
+                        if (productWinnerList.size() == 0) {
+                            binding.winnersListRv.setVisibility(View.GONE);
+                            binding.emptyTxtWinner.setVisibility(View.VISIBLE);
+                        } else {
+//                            reverse list to descending order
+                            Collections.reverse(productWinnerList);
+
+                            binding.winnersListRv.setAdapter(new ProductAllWinnersAdapter(productWinnerList,getContext(), true));
+                            binding.winnersListRv.setLayoutManager(new LinearLayoutManager(getContext()));
+                            binding.winnersListRv.setNestedScrollingEnabled(false);
+                        }
 
 
                     } else if (!response.getBoolean("status") && response.getInt("code") == 201){
@@ -129,7 +185,7 @@ public class ProductWinFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(requireActivity()));
                 return header;
             }
         };

@@ -39,6 +39,7 @@ public class DiamondHistoryActivity extends AppCompatActivity {
     ActivityDiamondHistoryBinding binding;
 
     ArrayList<HistoryModal> diamondHistoryList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +57,7 @@ public class DiamondHistoryActivity extends AppCompatActivity {
 
         diamondHistoryList = new ArrayList<>();
 
+
         getDiamondHistoryList();
 
         /*diamondHistoryList.add(new HistoryModal("25 Jun 2023","03:00 PM","25",
@@ -68,23 +70,28 @@ public class DiamondHistoryActivity extends AppCompatActivity {
 
     private void getDiamondHistoryList() {
 
+        binding.frameLayout.setVisibility(View.VISIBLE);
+        binding.progressBar3.setVisibility(View.VISIBLE);
+        binding.errorImg.setVisibility(View.GONE);
+        binding.message.setVisibility(View.GONE);
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.DIAMOND_HISTORY_URL, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            if (response.getBoolean("status") && response.getInt("code") == 200){
+                            if (response.getBoolean("status") && response.getInt("code") == 200) {
                                 binding.frameLayout.setVisibility(View.GONE);
 
 
-                                Log.d("getDiamondHistoryList", "onResponse: response Sucessfull: "+ response.getString("data"));
+                                Log.d("getDiamondHistoryList", "onResponse: response Sucessfull: " + response.getString("data"));
 
                                 JSONArray jsonArray = response.getJSONArray("data");
 
-                                for (int i = 0; i<jsonArray.length(); i++){
+                                for (int i = 0; i < jsonArray.length(); i++) {
 
                                     JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                                    int hisDiamonds  = jsonObject.getInt("daimonds");
+                                    int hisDiamonds = jsonObject.getInt("daimonds");
                                     String hisMsg = jsonObject.getString("tran_type");
                                     String type = jsonObject.getString("type");
                                     String hisDate = jsonObject.getString("tran_date");
@@ -96,13 +103,14 @@ public class DiamondHistoryActivity extends AppCompatActivity {
                                     String dateMain = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date);
 
 //                                    time format
-                                    Date time = new SimpleDateFormat("hh:mm:ssa", Locale.getDefault()).parse(hisTime);
-                                    String timeMain = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(time);
+//                                    Date time = new SimpleDateFormat("hh:mm:ssa", Locale.getDefault()).parse(hisTime);
+//                                    String timeMain = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(time);
+                                    String timeMain= hisTime;
 
                                     boolean isCredited;
-                                    if (type.equals("DR")){
+                                    if (type.equals("DR")) {
                                         isCredited = false;
-                                    }else {
+                                    } else {
                                         isCredited = true;
                                     }
 
@@ -112,29 +120,34 @@ public class DiamondHistoryActivity extends AppCompatActivity {
 //                                    String sdf = new SimpleDateFormat("hh:mm", Locale.getDefault()).format(localDate);
 
                                     HistoryModal historyModal = new HistoryModal(
-                                            dateMain,timeMain,hisDiamonds+"",isCredited, hisMsg
+                                            dateMain, timeMain, hisDiamonds + "", isCredited, hisMsg
                                     );
                                     diamondHistoryList.add(historyModal);
 
 
                                 }
 
-                                binding.diamondHistoryRv.setAdapter(new DiamondHistoryAdapter(diamondHistoryList,DiamondHistoryActivity.this));
+                                binding.diamondHistoryRv.setAdapter(new DiamondHistoryAdapter(diamondHistoryList, DiamondHistoryActivity.this));
                                 binding.diamondHistoryRv.setLayoutManager(new LinearLayoutManager(DiamondHistoryActivity.this));
                                 binding.diamondHistoryRv.setNestedScrollingEnabled(false);
 
 //                                ControlRoom.getInstance().setCoins(response.getInt("ava_coins")+"");
-                                binding.diamondTv.setText(ControlRoom.getInstance().getDiamonds());
+                                binding.diamondTv.setText(ControlRoom.getInstance().getDiamonds(DiamondHistoryActivity.this));
 
                             } else if (!response.getBoolean("status") && response.getInt("code") == 201) {
-                                Log.d("getDiamondHistoryList", "onResponse: response Failed: "+ response.getString("data"));
+                                Log.d("getDiamondHistoryList", "onResponse: response Failed: " + response.getString("data"));
                                 binding.frameLayout.setVisibility(View.VISIBLE);
                                 binding.progressBar3.setVisibility(View.GONE);
                                 binding.errorImg.setVisibility(View.VISIBLE);
                                 binding.message.setVisibility(View.VISIBLE);
-                                binding.message.setText(response.getString("data"));
+                                String msg = response.getString("data");
+                                if (msg.equals("No coin transaction found!.."))
+                                    binding.message.setText("No Diamonds history found.");
+                                else
+                                    binding.message.setText(response.getString(msg));
 
-                            }else {
+
+                            } else {
                                 Log.d("getDiamondHistoryList", "onResponse: Something went wrong ");
                                 binding.frameLayout.setVisibility(View.VISIBLE);
                                 binding.progressBar3.setVisibility(View.GONE);
@@ -152,14 +165,14 @@ public class DiamondHistoryActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("getDiamondHistoryList", "onResponse: error response: "+error.getMessage());
+                Log.d("getDiamondHistoryList", "onResponse: error response: " + error.getMessage());
             }
-        }){
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(DiamondHistoryActivity.this));
                 return header;
             }
         };

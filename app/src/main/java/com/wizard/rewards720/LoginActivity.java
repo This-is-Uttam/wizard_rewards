@@ -106,13 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-        /*GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
-        if (account != null) {
-            binding.googleSignIn.setClickable(false);
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }else
-            binding.googleSignIn.setClickable(true);*/
+
 
         binding.googleSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", email);
-            jsonObject.put(DEVICE_ID, getDeviceId());
+            jsonObject.put(DEVICE_ID, getDeviceIds());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -219,13 +213,15 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 else {
                                     Log.d("authLogin", "onResponse: response is Successfull " + response.getString("data"));
-                                    accessToken = response.getString("data");
-                                    Log.d("asdf", "onResponse: Shubham access token "+ accessToken);
-                                    ControlRoom.getInstance().setAccessToken(accessToken);
+//                                    accessToken = response.getString("data");
+                                    String accessMainToken = response.getString("data");
+//                                    Log.d("asdf", "onResponse: Shubham access token "+ accessToken);
 
-                                    getSharedPreferences("ACCESS_TOKEN", MODE_PRIVATE).edit()
-                                            .putString("accessToken", accessToken)
-                                            .apply();
+                                    // Store in shared preference.
+//                                    getSharedPreferences("ACCESS_TOKEN", MODE_PRIVATE).edit()
+//                                            .putString("accessToken", accessToken)
+//                                            .apply();
+                                    ControlRoom.getInstance().setAccessToken(LoginActivity.this, accessMainToken);
 
                                     getFcmToken();
                                     Toast.makeText(getApplicationContext(), "Welcome " + displayName, Toast.LENGTH_SHORT).show();
@@ -253,11 +249,11 @@ public class LoginActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public String getDeviceId() {
+    public String getDeviceIds() {
 //        This may throw error somewhere...(Play Store)
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.d("getDeviceId", "getDeviceId: DeviceId: " + deviceId);
-        return deviceId;
+        String deviceId1 = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+//        Log.d("getDeviceId", "getDeviceId: DeviceId: " + deviceId);
+        return deviceId1;
     }
 
 
@@ -322,8 +318,8 @@ public class LoginActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, "Bearer " + accessToken);
-                Log.d("oooo", "getHeaders: access tokennnnnnn: "+ accessToken);
+                header.put(AUTHORISATION, "Bearer " + ControlRoom.getInstance().getAccessToken(LoginActivity.this));
+//                Log.d("oooo", "getHeaders: access tokennnnnnn: "+ accessToken);
                 return header;
             }
         };
@@ -336,6 +332,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("status") && response.getInt("code") == 200){
+                        Log.d("checkReferral", "onResponse: Refer Stutus Activity: "+ response.getString("data"));
+                        JSONObject userData = response.getJSONObject("data");
+                        ControlRoom.getInstance().setUserData(userData, LoginActivity.this);
                        int referStatus = response.getJSONObject("data").getInt("refer_status");
 
                        if (referStatus == 0){
@@ -365,7 +364,7 @@ public class LoginActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String,String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(LoginActivity.this));
                 return header;
             }
         };

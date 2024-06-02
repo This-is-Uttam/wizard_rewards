@@ -3,6 +3,7 @@ package com.wizard.rewards720.Modals;
 public class ProductWinModal {
     String userName, userImage, productName, productImage, mrp;
     int productWinnerCount;
+    String winMonth;
 
     public ProductWinModal(String userName, String userImage, String productName, String productImage, String mrp) {
         this.userName = userName;
@@ -10,6 +11,14 @@ public class ProductWinModal {
         this.productName = productName;
         this.productImage = productImage;
         this.mrp = mrp;
+    }
+
+    public String getWinMonth() {
+        return winMonth;
+    }
+
+    public void setWinMonth(String winMonth) {
+        this.winMonth = winMonth;
     }
 
     public int getProductWinnerCount() {

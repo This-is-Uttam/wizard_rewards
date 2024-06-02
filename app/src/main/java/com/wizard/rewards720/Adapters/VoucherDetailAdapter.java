@@ -41,7 +41,7 @@ public class VoucherDetailAdapter extends RecyclerView.Adapter<VoucherDetailAdap
 
         holder.binding.voucherName.setText(voucherMainModal.getVouMainItemName());
         holder.binding.voucherAmt.setText("₹ "+voucherMainModal.getMrp());
-        holder.binding.voucherCoins.setText(voucherMainModal.getVouPricePerSpot());
+        holder.binding.voucherCoins.setText(voucherMainModal.getVouPricePerSpot()+"");
 //        Item left
         holder.binding.progressBar.setMax(Integer.parseInt(voucherMainModal.getTotalSpotText()));
         holder.binding.progressBar.setProgress(Integer.parseInt(voucherMainModal.getSpotLeftText()));

@@ -39,7 +39,7 @@ public class VoucherMainAdapter extends RecyclerView.Adapter<VoucherMainAdapter.
         VoucherMainModal modal = voucherMainList.get(position);
 
         holder.binding.voucherName.setText(modal.getVouMainItemName());
-        holder.binding.voucherCoins.setText(modal.getVouPricePerSpot());
+        holder.binding.voucherCoins.setText(modal.getVouPricePerSpot()+"");
         holder.binding.voucherAmt.setText("₹" + modal.getMrp());
         holder.binding.itemLeftText.setText(modal.getSpotLeftText());
         holder.binding.progressBar.setMax(Integer.parseInt(modal.getTotalSpotText()));

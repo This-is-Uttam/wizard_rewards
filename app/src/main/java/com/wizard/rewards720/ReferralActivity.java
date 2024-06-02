@@ -59,7 +59,7 @@ public class ReferralActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(ReferralActivity.this, MainActivity.class));
-                finish();
+                finishAffinity();
             }
         });
 
@@ -109,7 +109,7 @@ public class ReferralActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String,String> header = new HashMap<>();
                 header.put(Constants.CONTENT_TYPE,Constants.CONTENT_TYPE_VALUE);
-                header.put(Constants.AUTHORISATION, Constants.BEARER+ accessToken);
+                header.put(Constants.AUTHORISATION, Constants.BEARER+ ControlRoom.getInstance().getAccessToken(ReferralActivity.this));
                 return header;
             }
         };

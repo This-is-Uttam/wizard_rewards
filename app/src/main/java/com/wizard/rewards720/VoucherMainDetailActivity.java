@@ -160,7 +160,7 @@ public class VoucherMainDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(VoucherMainDetailActivity.this));
                 return header;
             }
         };
@@ -239,7 +239,7 @@ public class VoucherMainDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, BEARER + accessToken);
+                header.put(AUTHORISATION, BEARER + ControlRoom.getInstance().getAccessToken(VoucherMainDetailActivity.this));
                 return header;
             }
         };
@@ -268,8 +268,8 @@ public class VoucherMainDetailActivity extends AppCompatActivity {
         coinsNdiamondRadio.setText("Use "+ coinsAfterDiamondsDeduct + " Coins + "+diamondsRequired+" Diamonds");
         buyCoinDialog = dialogBuilder.create();
 
-        int userCoins = Integer.parseInt(ControlRoom.getInstance().getCoins());
-        int userDiamonds = Integer.parseInt(ControlRoom.getInstance().getDiamonds());
+        int userCoins = Integer.parseInt(ControlRoom.getInstance().getCoins(this));
+        int userDiamonds = Integer.parseInt(ControlRoom.getInstance().getDiamonds(this));
 
 
         boolean isCoinsOnlyBidding;
@@ -366,7 +366,7 @@ public class VoucherMainDetailActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> header = new HashMap<>();
                 header.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-                header.put(AUTHORISATION, "Bearer " + accessToken);
+                header.put(AUTHORISATION, "Bearer " + ControlRoom.getInstance().getAccessToken(VoucherMainDetailActivity.this));
                 return header;
             }
         };
